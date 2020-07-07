@@ -31,11 +31,11 @@ func uniquePaths(m int, n int) int {
 	// dp[0][j] = dp[i][0] = 1 for all valid i and j
 	// 其余数组值可以是任何值，后面的计算会覆盖掉
 
-	for j := 1; j < n; j++ {
+	for j := 0; j < n; j++ {
 		dp[0][j] = 1
 	}
 
-	for i := 1; i < m; i++ {
+	for i := 0; i < m; i++ {
 		dp[i][0] = 1
 	}
 
@@ -53,4 +53,7 @@ func main() {
 
 	m, n = 7, 3
 	fmt.Printf("m: %d, n: %d, result: %v\n", m, n, uniquePaths(m, n)) // 28
+
+	m, n = 1, 1
+	fmt.Printf("m: %d, n: %d, result: %v\n", m, n, uniquePaths(m, n)) // 1
 }
