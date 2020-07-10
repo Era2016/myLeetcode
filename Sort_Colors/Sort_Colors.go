@@ -11,7 +11,7 @@ import "fmt"
 待交换值的索引i，j，如果j <= i 退出循环
 */
 func sortColors(nums []int) {
-	
+
 	var index, end int
 	index, end = 0, len(nums)-1
 	endNot2, end0 := end, end
@@ -44,9 +44,27 @@ func sortColors(nums []int) {
 	}
 }
 
+func sortColors2(nums []int) {
+	start0, start1 := 0, 0
+	end2 := len(nums) - 1
+
+	for start1 <= end2 {
+		if nums[start1] == 0 {
+			nums[start1], nums[start0] = nums[start0], nums[start1]
+			start0++
+			start1++
+		} else if nums[start1] == 1 {
+			start1++
+		} else {
+			nums[start1], nums[end2] = nums[end2], nums[start1]
+			end2--
+		}
+	}
+}
+
 func main() {
 	origin := []int{2, 0, 2, 1, 1, 0}
 	fmt.Printf("before: %v\n", origin)
-	sortColors(origin)
+	sortColors2(origin)
 	fmt.Printf("after: %v\n", origin)
 }
