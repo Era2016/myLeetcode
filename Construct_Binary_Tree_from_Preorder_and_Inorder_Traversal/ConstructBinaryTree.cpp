@@ -16,6 +16,7 @@ struct TreeNode {
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+
     	if (preorder.size() == 0 || preorder.size() != inorder.size()) {
     		return NULL;
     	}
@@ -26,39 +27,52 @@ private:
 	TreeNode* construct(vector<int>& preorder, int startP, int endP, 
 		vector<int>& inorder, int startI, int endI) {
 
-		if (startP == endP && startI == endI) {
+		if (startP > endP && startI > endI) {
 			return NULL;
 		}
 
     	// 左子树数据范围确认
 		int i = startI;
-    	while (i < (int)inorder.size() && inorder[i] != preorder[startP]) {
+    	while (i <= endI && inorder[i] != preorder[startP]) {
     		i ++;
     	}
 
     	// 数据异常，前序中序数据不一致
-    	if (i == (int)inorder.size()) {
+    	if (i > endI) {
+    		//cout << "data exception" << endl;
     		return NULL;
     	}
-
-    	int counter = i - startI + 1;
 
     	// 右子树数据范围确认
-
-		// counter >= 1
-    	if (counter < 1) {
-    		return NULL;
-    	}
-
-    	// startP+counter+1 <= enp
-    	// startI+counter <= endI
+    	// int counter = i - startI;
+    	// startP+counter+1 <= endp <=> counter+1 <= endp-startp
+    	// startI+counter <= endI <=> counter <= endI-startI
 
  		TreeNode* node = new TreeNode();
- 		node->val = preorder[startP]
- 		// 构建左子树
- 		node->left = construct(preorder, startP+1, startP+counter, inorder, startI, startI+counter-1);
+ 		node->val = preorder[startP];
+ 		// 构建左子树  counter = i - startI;
+ 		node->left = construct(preorder, startP+1, startP+i-startI, inorder, startI, i-1);	
  		// 构建右子树
- 		node->right = construct(preorder, startP+counter+1, endP, inorder, startI+counter, endI);
+ 		node->right = construct(preorder, startP+i-startI+1, endP, inorder, i+1, endI);	
  		return node;
 	}
 };
+
+void print(TreeNode* root) {
+	if (root) {
+		cout << root->val << "\t";
+		print(root->left);
+		print(root->right);
+	}
+	//cout << endl;
+}
+
+int main() {
+	vector<int> preorder = {3,9,20,15,7};
+	vector<int> inorder = {9,3,15,20,7};
+
+	TreeNode* root = new TreeNode{};
+	Solution* so = new Solution();
+	root = so->buildTree(preorder, inorder);
+	print(root);
+}
