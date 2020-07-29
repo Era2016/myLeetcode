@@ -1,29 +1,62 @@
 package main
 
 import "fmt"
+/*
+k = i / 3 * 3 + j / 3
+
+0  0  0 | 1  1  1 | 2  2  2
+0  0  0 | 1  1  1 | 2  2  2
+0  0  0 | 1  1  1 | 2  2  2
+--------+---------+---------
+3  3  3 | 4  4  4 | 5  5  5
+3  3  3 | 4  4  4 | 5  5  5
+3  3  3 | 4  4  4 | 5  5  5
+--------+----------+--------
+6  6  6 | 7  7  7 | 8  8  8
+6  6  6 | 7  7  7 | 8  8  8
+6  6  6 | 7  7  7 | 8  8  8
+
+*/
 
 func isValidSudoku(board [][]byte) bool {
+	s1 := [9][9]int{}
+	s2 := [9][9]int{}
+	s3 := [9][9]int{}
+
 	for i := 0; i < len(board); i++ {
-		mm := make(map[byte]bool)
 		for j := 0; j < len(board[0]); j++ {
 			if board[i][j] != '.' {
-				if _, ok := mm[board[i][j]]; ok {
+				num := board[i][j] - '0' - 1
+				k := i/3*3 + j/3
+				if s1[i][num] == 1 || s2[j][num] == 1 || s3[k][num] == 1 {
 					return false
 				} else {
-					mm[board[i][j]] = true
+					s1[i][num], s2[j][num], s3[k][num] = 1, 1, 1
 				}
 			}
 		}
 	}
+	return true
+}
 
-	for i := 0; i < len(board[0]); i++ {
-		mm := make(map[byte]bool)
-		for j := 0; j < len(board); j++ {
-			if board[j][i] != '.' {
-				if _, ok := mm[board[j][i]]; ok {
+func isValidSudoku2(board [][]byte) bool {
+	for i := 0; i < len(board); i++ {
+		m1 := make(map[byte]bool)
+		m2 := make(map[byte]bool)
+		for j := 0; j < len(board[0]); j++ {
+			if board[i][j] != '.' {
+				if _, ok := m1[board[i][j]]; ok {
 					return false
 				} else {
-					mm[board[j][i]] = true
+					m1[board[i][j]] = true
+				}
+			}
+
+			if board[j][i] != '.' {
+				if _, ok := m2[board[j][i]]; ok {
+					return false
+				} else {
+					m2[board[j][i]] = true
 				}
 			}
 		}
