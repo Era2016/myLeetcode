@@ -31,7 +31,7 @@ public:
         //cout << "pointerCopy finished" << endl;
 
     	// link decoupling
-    	return decoupling(head);
+    	return decouplingWithHead(head);
     }
 private:
 	void nodeConnect(Node* head) {
@@ -54,7 +54,7 @@ private:
 		}
 	}
 
-	Node* decoupling(Node* head) {
+	Node* decouplingWithoutHead(Node* head) {
         if (head == NULL) {
             return NULL;
         }
@@ -79,6 +79,22 @@ private:
 		//print(newHead);
 		return newHead;
 	}
+
+    Node* decouplingWithHead(Node* head) {
+        Node* newHead = new Node(0);
+        Node* p, *q = newHead;
+        while (head != NULL) {
+            Node* tmp = head->next->next;
+
+            p = head->next;
+            q->next = p;
+            q = p;
+
+            head->next = tmp;
+            head = tmp; 
+        } 
+        return newHead->next;
+    }
 };
 
 void print(Node* head) {
@@ -91,10 +107,10 @@ void print(Node* head) {
 }
 
 int main() {
-	/*Node* node1 = new Node(1);
+	Node* node1 = new Node(1);
 	Node* node2 = new Node(2);
 	node1->next = node2; node1->random = node2;
-	node2->random = node2;*/
+	node2->random = node2;
 
     /*Node* node1 = new Node(3);
     Node* node2 = new Node(3);
@@ -103,7 +119,7 @@ int main() {
     node2->next = node3; node2->random = node1;
     node3->random = NULL;*/
 
-    Node* node1 = NULL;// = new Node(1);
+    //Node* node1 = NULL;// = new Node(1);
 	print(node1);
 	Solution* so = new Solution();
 	Node* head = so->copyRandomList(node1);
