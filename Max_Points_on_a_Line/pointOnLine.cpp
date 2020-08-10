@@ -1,39 +1,54 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
-struct Point
-{
-	x, y int
-};
-
 class Solution {
 public:
-    int maxPoints(vector<Point> &points) {
-    int result = 0;
-    for(int i = 0; i < points.size(); i++){
-        int samePoint = 1;
-        unordered_map<double, int> map;
-        for(int j = i + 1; j < points.size(); j++){
-            if(points[i].x == points[j].x && points[i].y == points[j].y){
-                samePoint++;
+
+	// 存在精度问题
+	int maxPoints(vector<vector<int>>& points) {
+        int result = 0;
+        for(int i = 0; i < (int)points.size(); i++){
+            int samePoint = 1;
+            unordered_map<double, int> map;
+            for(int j = i + 1; j < (int)points.size(); j++){
+                if(points[i][0] == points[j][0] && points[i][1] == points[j][1]){
+                    samePoint++;
+                }
+                else if(points[i][0] == points[j][0]){
+                    map[INT_MAX]++;
+                }
+                else{
+                    double slope = double(points[i][1] - points[j][1]) / double(points[i][0] - points[j][0]);
+                    map[slope]++;
+                }
             }
-            else if(points[i].x == points[j].x){
-                map[INT_MAX]++;
+            int localMax = 0;
+            for(auto it = map.begin(); it != map.end(); it++){
+                localMax = max(localMax, it->second);
             }
-            else{
-                double slope = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
-                map[slope]++;
-            }
+            localMax += samePoint;
+            result = max(result, localMax);
         }
-        int localMax = 0;
-        for(auto it = map.begin(); it != map.end(); it++){
-            localMax = max(localMax, it->second);
-        }
-        localMax += samePoint;
-        result = max(result, localMax);
+        return result;
     }
-    return result;
-	}
 };
+
+int main() {
+	vector<vector<int> > vv1 = {{1, 1}, {2, 2}, {3, 3}};
+	vector<vector<int> > vv2 = {{1, 1}, {3, 2}, {5, 3}, {4, 1}, {2, 3}, {1, 4}};
+	vector<vector<int> > vv3 = {{0, 0}};
+	vector<vector<int> > vv4 = {};
+	vector<vector<int> > vv5 = {{3, 10}, {0, 2}, {0, 2}, {3, 10}};
+	vector<vector<int> > vv6 = {{0,0},{94911151,94911150},{94911152,94911151}};
+
+	Solution* so = new Solution();
+	cout << so->maxPoints(vv1) << endl;
+	cout << so->maxPoints(vv2) << endl;
+	cout << so->maxPoints(vv3) << endl;
+	cout << so->maxPoints(vv4) << endl;
+	cout << so->maxPoints(vv5) << endl;
+	cout << so->maxPoints(vv6) << endl;
+}
