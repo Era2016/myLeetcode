@@ -79,7 +79,7 @@ func maxPoints(points [][]int) int {
 		}
 	}
 
-	fmt.Println(m)
+	//fmt.Println(m)
 	var x, k, b float64
 	var max int
 	for v, _ := range m {
@@ -123,18 +123,20 @@ func equal(a, b float64) (ret bool) {
 func main() {
 	//fmt.Println(equal(float64(10), float64(10.000001)))
 
-	// points1 := [][]int{{1, 1}, {2, 2}, {3, 3}}
-	// points2 := [][]int{{1, 1}, {3, 2}, {5, 3}, {4, 1}, {2, 3}, {1, 4}}
-	// points3 := [][]int{{0, 0}}
-	// points4 := [][]int{}
-	// points5 := [][]int{{3, 10}, {0, 2}, {0, 2}, {3, 10}}
-	// points6 := [][]int{{0, 0}, {94911151, 94911150}, {94911152, 94911151}} // -> 2
+	points1 := [][]int{{1, 1}, {2, 2}, {3, 3}}
+	points2 := [][]int{{1, 1}, {3, 2}, {5, 3}, {4, 1}, {2, 3}, {1, 4}}
+	points3 := [][]int{{0, 0}}
+	points4 := [][]int{}
+	points5 := [][]int{{3, 10}, {0, 2}, {0, 2}, {3, 10}}
+	points6 := [][]int{{0, 0}, {94911151, 94911150}, {94911152, 94911151}} // -> 2
 	points7 := [][]int{{4, 0}, {4, -1}, {4, 5}}
-	// fmt.Println(maxPoints(points1))
-	// fmt.Println(maxPoints(points2))
-	// fmt.Println(maxPoints(points3))
-	// fmt.Println(maxPoints(points4))
-	// fmt.Println(maxPoints(points5))
-	// fmt.Println(maxPoints(points6))
+	points8 := [][]int{{2, 3}, {3, 3}, {-5, 3}}
+	fmt.Println(maxPoints(points1))
+	fmt.Println(maxPoints(points2))
+	fmt.Println(maxPoints(points3))
+	fmt.Println(maxPoints(points4))
+	fmt.Println(maxPoints(points5))
+	fmt.Println(maxPoints(points6))
 	fmt.Println(maxPoints(points7))
+	fmt.Println(maxPoints(points8))
 }
