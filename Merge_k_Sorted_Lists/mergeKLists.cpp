@@ -53,12 +53,12 @@ public:
 	    ListNode head(0);
 	    ListNode *curNode = &head;
 	    vector<ListNode*> v;   
-	    for(int i =0; i<lists.size(); i++){
-	        if(lists[i]) v.push_back(lists[i]);
+	    for(int i = 0; i < lists.size(); i++) {
+	        if (lists[i]) v.push_back(lists[i]);
 	    }
 	    make_heap(v.begin(), v.end(), heapComp); //vector -> heap data strcture
 
-	    while (v.size() > 0){
+	    while (v.size() > 0) {
 	        curNode->next = v.front();
 	        pop_heap(v.begin(), v.end(), heapComp); 
 	        v.pop_back(); 
@@ -164,6 +164,6 @@ int main() {
 	v.push_back(l3);
 
 	Solution* so = new Solution();
-	ListNode* l = so->mergeKLists3(v);
+	ListNode* l = so->mergeKLists2(v);
 	print(l);
 }
