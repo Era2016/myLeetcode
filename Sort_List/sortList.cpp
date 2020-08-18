@@ -29,6 +29,7 @@ public:
 private:
     void quickSort(ListNode* pHead, ListNode* pTail) {
         if (pHead != pTail) {
+        //if (pHead != pTail || pHead->next != pTail) {
             ListNode* pMid = partation(pHead, pTail);
             cout << "partation is: " << pMid->val << endl;
             quickSort(pHead, pMid);
@@ -54,6 +55,12 @@ private:
         return pIndex;
     }
 };
+
+//void swap(int &a, int &b) {
+//    int tmp = a;
+//    a = b;
+//    b = tmp;
+//}
 
 void print(ListNode* pHead) {
     while (pHead != NULL) {
