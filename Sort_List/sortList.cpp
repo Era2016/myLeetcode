@@ -5,7 +5,7 @@ using namespace std;
 struct ListNode {
 	int val;
 	ListNode* next;
-	ListNode() {};
+	ListNode(): val(0), next(NULL) {};
 	ListNode(int x): val(x), next(NULL) {};
 	ListNode(int x, ListNode* next): val(x), next(next) {};
 };
@@ -13,64 +13,72 @@ struct ListNode {
 class Solution {
 public:
     ListNode* sortList(ListNode* head) {
-    	if (head == NULL || head->next == NULL) {
-    		return head;
-    	}
+        if (head == NULL) { return head; }
+        ListNode* pHead = head;
+        ListNode* pTail = head;
+        while (pTail->next != NULL) {
+            pTail = pTail->next;
+        }
 
-    	ListNode* pStart = head;
-    	ListNode* pEnd = head->next;
-    	while (pEnd->next != NULL) {
-    		pEnd = pEnd->next;
-    	}
-
-    	quickSort(pStart, pEnd);
-    	return head;
+        cout << "tail node: " << pTail->val << endl;
+        quickSort(pHead, pTail);
+        //quickSort(pHead, NULL);
+        return head;
     }
 
 private:
-	void quickSort(ListNode* pStart, ListNode* pEnd) {
-		if (pStart != pEnd) {
-			ListNode* pIndex = partation(pStart, pEnd);
-			quickSort(pStart, pIndex);
-			quickSort(pIndex->next, pEnd);
-		}
-	}
+    void quickSort(ListNode* pHead, ListNode* pTail) {
+        if (pHead != pTail) {
+        //if (pHead != pTail || pHead->next != pTail) {
+            ListNode* pMid = partation(pHead, pTail);
+            cout << "partation is: " << pMid->val << endl;
+            quickSort(pHead, pMid);
+            quickSort(pMid->next, pTail);
+        }
+    }
 
-	ListNode* partation(ListNode* pStart, ListNode* pEnd) {
-		ListNode* pIndex = pStart;
-		swap(pStart.val, pEnd.val);
-		
-		for (ListNode* p = pStart; p != pEnd; p = p->next) {
-			if (p.val < pEnd.val) {
-				if (pIndex != p) {
-					swap(p.val, pIndex.val);
-					pIndex = pIndex->next;
-				}
-			}
-		}
-
-		pIndex = pIndex->next;
-		swap(pIndex.val, pEnd.val);
-		return pIndex;
-	}
+    ListNode* partation(ListNode* pHead, ListNode* pTail) {
+        ListNode* pIndex = pHead;
+        ListNode* pStart = pHead;
+        swap(pStart->val, pTail->val);
+        while (pStart != pTail) {
+            if (pStart->val < pTail->val) {
+                if (pStart != pIndex) {
+                    swap(pStart->val, pIndex->val);
+                    pIndex = pIndex->next;
+                }
+            }
+            pStart = pStart->next;
+        }
+        //pIndex = pIndex->next;
+        swap(pIndex->val, pTail->val);
+        return pIndex;
+    }
 };
 
-void print(ListNode* p) {
-	while (p != NULL) {
-		cout << p->val << "\t";
-	}
-	cout << endl;
+//void swap(int &a, int &b) {
+//    int tmp = a;
+//    a = b;
+//    b = tmp;
+//}
+
+void print(ListNode* pHead) {
+    while (pHead != NULL) {
+        cout << pHead->val << "\t";
+        pHead = pHead->next;
+    }
+    cout << endl;
 }
 
 int main() {
-	ListNode* n1 = new ListNode(4);
-    ListNode* n2 = new ListNode(2);
-    ListNode* n3 = new ListNode(1);
-    ListNode* n4 = new ListNode(3);
+    ListNode* node1 = new ListNode(4);
+    ListNode* node2 = new ListNode(2);
+    ListNode* node3 = new ListNode(1);
+    ListNode* node4 = new ListNode(3);
+    node1->next = node2; node2->next = node3; node3->next = node4;
+    print(node1);
 
-    n1->next = n2; n2->next = n3; n3->next = n4;
-    print(n1);
     Solution* so = new Solution();
-    ListNode* n = so->sortList(n1);
-    print(n);
+    ListNode* head = so->sortList(node1);
+    print(head);
 }
