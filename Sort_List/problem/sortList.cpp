@@ -13,14 +13,23 @@ struct ListNode {
 class Solution {
 public:
     ListNode* sortList(ListNode* head) {
+        if (head == NULL) { return head; }
         ListNode* pHead = head;
-        quickSort(pHead, NULL);
+        ListNode* pTail = head;
+        while (pTail->next != NULL) {
+            pTail = pTail->next;
+        }
+
+        cout << "tail node: " << pTail->val << endl;
+        quickSort(pHead, pTail);
+        //quickSort(pHead, NULL);
         return head;
     }
 
 private:
     void quickSort(ListNode* pHead, ListNode* pTail) {
-        if (pHead != pTail && pHead->next != pTail) {
+        if (pHead != pTail) {
+        //if (pHead != pTail || pHead->next != pTail) {
             ListNode* pMid = partation(pHead, pTail);
             cout << "partation is: " << pMid->val << endl;
             quickSort(pHead, pMid);
@@ -30,17 +39,19 @@ private:
 
     ListNode* partation(ListNode* pHead, ListNode* pTail) {
         ListNode* pIndex = pHead;
-        ListNode* pStart = pHead->next; // require pHead != NULL
+        ListNode* pStart = pHead;
+        swap(pStart->val, pTail->val);
         while (pStart != pTail) {
-            if (pStart->val < pHead->val) {
+            if (pStart->val < pTail->val) {
                 if (pStart != pIndex) {
-                    pIndex = pIndex->next; // require pHead->next != NULL
                     swap(pStart->val, pIndex->val);
+                    pIndex = pIndex->next;
                 }
             }
             pStart = pStart->next;
         }
-        swap(pIndex->val, pHead->val);
+        //pIndex = pIndex->next;
+        swap(pIndex->val, pTail->val);
         return pIndex;
     }
 };
