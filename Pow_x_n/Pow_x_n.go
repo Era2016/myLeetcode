@@ -46,6 +46,10 @@ func myPowWithRecursive(x float64, n int) float64 {
 	}
 }
 
+/*
+	N = 9 = 2^3 + 2^0 = 1001 in binary. Then:
+	x^9 = x^(2^3) * x^(2^0)
+*/
 func myPowWithoutRecursive(x float64, n int) float64 {
 	if n == 0 {
 		return 1
