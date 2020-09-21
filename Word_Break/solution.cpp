@@ -7,7 +7,7 @@ using namespace std;
 class Solution {
 public:
     // time out: 2的n次方复杂度
-    bool wordBreak(string s, vector<string>& wordDict) {
+    bool wordBreak2(string s, vector<string>& wordDict) {
 		if (s.length() == 0) {
 			return true;
 		}
@@ -17,16 +17,33 @@ public:
  		for (int i = 1; i <= (int)s.length(); i ++) {
 			string slice = s.substr(0, i); // substr -> [0,i)
 			unordered_set<string>::iterator iter = uset.find(slice);
-			if (iter != uset.end() && wordBreak(s.substr(i), wordDict)) {
+			if (iter != uset.end() && wordBreak2(s.substr(i), wordDict)) {
                 return true;
             }
 
             // also works 
 			/*if (iter != uset.end()) {
-				return wordBreak(s.substr(i), wordDict);
+				return wordBreak2(s.substr(i), wordDict);
 			}*/
 		}       
 		return false;
+    }
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> uset(wordDict.begin(), wordDict.end()); 
+        vector<bool> dp(s.length()+1, false);
+        dp[0] = true;
+
+        for (int i = 1; i <= (int)s.length(); i ++) {
+            for (int j = 0; j < i; j ++) {
+                string slice = s.substr(j, i);
+                unordered_set<string>::iterator iter = uset.find(slice);
+                if (dp[j] == true && iter != uset.end()) {
+                    dp[i] = true; break;
+                }
+            }
+        }
+        return dp[s.length()];
     }
 };
 
