@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_set>
 
+//basic_string substr (size_type pos = 0, size_type len = npos) const;
 using namespace std;
 
 class Solution {
@@ -15,7 +16,7 @@ public:
 		unordered_set<string> uset(wordDict.begin(), wordDict.end());
 
  		for (int i = 1; i <= (int)s.length(); i ++) {
-			string slice = s.substr(0, i); // substr -> [0,i)
+			string slice = s.substr(0, i); // substr -> [0,i); i means count
 			unordered_set<string>::iterator iter = uset.find(slice);
 			if (iter != uset.end() && wordBreak2(s.substr(i), wordDict)) {
                 return true;
@@ -36,10 +37,13 @@ public:
 
         for (int i = 1; i <= (int)s.length(); i ++) {
             for (int j = 0; j < i; j ++) {
-                string slice = s.substr(j, i);
+                string slice = s.substr(j, i-j);
+                //cout << "i: " << i << " j: " << j << " slice: " << slice << endl;
                 unordered_set<string>::iterator iter = uset.find(slice);
                 if (dp[j] == true && iter != uset.end()) {
-                    dp[i] = true; break;
+                    dp[i] = true; 
+                    //cout << "index: " << i << " flag: " << j << " slice: " << slice << endl;
+                    break;
                 }
             }
         }
@@ -53,15 +57,15 @@ int main() {
 	bool val = true;
 	string str = "leetcode";
 	val = so->wordBreak(str, v);
-	cout << val << endl;
+	cout << val << endl << endl;
 
     v = {"apple", "pen"};
     str = "applepenapple";
 	val = so->wordBreak(str, v);
-	cout << val << endl;
+	cout << val << endl << endl;
 
     v = {"cats", "dog", "sand", "and", "cat"};
     str = "catsandog";
 	val = so->wordBreak(str, v);
-	cout << val << endl;
+	cout << val << endl << endl;
 }
