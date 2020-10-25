@@ -1,17 +1,14 @@
 package main
 
 /*
-	双向链表，头结点、尾结点均采用虚拟结点，简化处理逻辑
-	将链表相关的节点删除和插入，抽象成方法
-	考虑并发问题，添加了读写锁sync.RWMutex，可以考虑用syncmap来实现hash
+去除读写锁，不支持并发读写；leetcode提交代码
 */
 
 import "fmt"
-import "sync"
 
 // doublely link list
 type linkList struct {
-	key, val   int64
+	key, val   int
 	prev, next *linkList
 }
 
@@ -30,15 +27,14 @@ func nodeInsert(head, node *linkList) {
 }
 
 type LRUCache struct {
-	count, capacity int64
-	hmap            map[int64]*linkList
+	count, capacity int
+	hmap            map[int]*linkList
 	head, tail      *linkList
-	sync.RWMutex
 }
 
-func cacheInit(capacity int64) *LRUCache {
-	cache := &LRUCache{
-		hmap:     make(map[int64]*linkList),
+func Constructor(capacity int) LRUCache {
+	cache := LRUCache{
+		hmap:     make(map[int]*linkList),
 		capacity: capacity,
 		head:     &linkList{},
 		tail:     &linkList{},
@@ -48,46 +44,39 @@ func cacheInit(capacity int64) *LRUCache {
 	return cache
 }
 
-func (cache *LRUCache) get(key int64) (val int64) {
+func (this *LRUCache) Get(key int) int {
+	var val int
 	var node *linkList
-	cache.RLock()
-	if _, ok := cache.hmap[key]; ok {
-		node = cache.hmap[key]
+
+	if _, ok := this.hmap[key]; ok {
+		node = this.hmap[key]
 		val = node.val
-		cache.RUnlock()
 	} else {
 		val = -1
-		cache.RUnlock()
-		return
+		goto FIN
 	}
 
-	cache.Lock()
-	if node == cache.head {
+	if node == this.head {
 		goto FIN
 	} else {
 		nodeRemove(node)
-		nodeInsert(cache.head, node)
+		nodeInsert(this.head, node)
 	}
 
 FIN:
-	cache.Unlock()
-
-	return
+	return val
 }
 
-func (cache *LRUCache) put(key, value int64) {
+func (this *LRUCache) Put(key, value int) {
 	var isUpdate bool
 	var node *linkList
-	cache.RLock()
-	if v, ok := cache.hmap[key]; ok {
+	if v, ok := this.hmap[key]; ok {
 		isUpdate = true
 		node = v
 	} else {
 		node = &linkList{key: key, val: value}
 	}
-	cache.RUnlock()
 
-	cache.Lock()
 	if isUpdate {
 		nodeRemove(node)
 		// update (key value) pair
@@ -95,22 +84,21 @@ func (cache *LRUCache) put(key, value int64) {
 	}
 
 	// insert node
-	nodeInsert(cache.head, node)
+	nodeInsert(this.head, node)
 	// update hash map
-	cache.hmap[key] = node
+	this.hmap[key] = node
 
 	// capacity check
 	if !isUpdate {
-		cache.count++
-		if cache.count > cache.capacity {
-			node := cache.tail.prev
-			delete(cache.hmap, node.key)
+		this.count++
+		if this.count > this.capacity {
+			node := this.tail.prev
+			delete(this.hmap, node.key)
 			nodeRemove(node)
-			cache.count--
+			this.count--
 		}
 	}
 
-	cache.Unlock()
 	return
 }
 
@@ -132,19 +120,19 @@ func (cache *LRUCache) printSequential() {
 
 func main() {
 
-	var cache *LRUCache = cacheInit(int64(10))
+	var cache LRUCache = Constructor(int(10))
 	for i := 1; i <= 20; i++ {
-		cache.put(int64(i), int64(i+100))
+		cache.Put(int(i), int(i+100))
 	}
 	cache.printSequential()
 	cache.print()
 
-	cache.put(int64(8), int64(88888))
+	cache.Put(int(8), int(88888))
 	cache.printSequential()
 	//cache.print()
 
-	cache.get(int64(1))
-	cache.get(int64(12))
+	cache.Get(int(1))
+	cache.Get(int(12))
 	cache.printSequential()
 
 	fmt.Println("hello world")

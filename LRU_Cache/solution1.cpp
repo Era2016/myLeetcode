@@ -29,10 +29,11 @@ public:
     }
     
 private:
-    typedef list<int> LI;
-    typedef pair<int, LI::iterator> PII;
-    typedef unordered_map<int, PII> HIPII;
+    typedef list<int> LI;                       // 模拟双向链表
+    typedef pair<int, LI::iterator> PII;        // pair(k, v) -> k:value, v:pointer to LI
+    typedef unordered_map<int, PII> HIPII;      // map(k, v) -> k:key, v:pointer to pair
     
+    // move node to the head
     void touch(HIPII::iterator it) {
         int key = it->first;
         used.erase(it->second.second);
