@@ -1,5 +1,10 @@
 package main
 
+/*
+	双向链表，头结点、尾结点均采用虚拟结点，简化处理逻辑
+	将链表相关的节点删除和插入，抽象成方法
+*/
+
 import "fmt"
 import "sync"
 
@@ -9,8 +14,22 @@ type linkList struct {
 	prev, next *linkList
 }
 
+func nodeDelete(node *linkList) {
+	node.prev.next = node.next
+	node.next.prev = node.prev
+	node.next, node.prev = nil, nil
+}
+
+func nodeInsert(head, node *linkList) {
+	node.prev = head
+	node.next = head.next
+
+	head.next.prev = node
+	head.next = node
+}
+
 type LRUCache struct {
-	capacity, count int64
+	count, capacity int64
 	hmap            map[int64]*linkList
 	head, tail      *linkList
 	sync.RWMutex
@@ -20,7 +39,11 @@ func cacheInit(capacity int64) *LRUCache {
 	cache := &LRUCache{
 		hmap:     make(map[int64]*linkList),
 		capacity: capacity,
+		head:     &linkList{},
+		tail:     &linkList{},
 	}
+	cache.head.next = cache.tail
+	cache.tail.prev = cache.head
 	return cache
 }
 
@@ -38,26 +61,14 @@ func (cache *LRUCache) get(key int64) (val int64) {
 		return
 	}
 
-	// sort link list
 	cache.Lock()
 	if node == cache.head {
 		goto FIN
 	} else {
 		// delete node
-		if node.next == nil { // tail node
-			node.prev.next = nil
-			cache.tail = node.prev
-			node.prev = nil
-		} else { // normal node
-			node.prev.next = node.next
-			node.next.prev = node.prev
-			node.next, node.prev = nil, nil
-		}
-
+		nodeDelete(node)
 		// insert node
-		node.next = cache.head
-		cache.head.prev = node
-		cache.head = node
+		nodeInsert(cache.head, node)
 	}
 
 FIN:
@@ -81,29 +92,13 @@ func (cache *LRUCache) put(key, value int64) {
 	cache.Lock()
 	if isUpdate {
 		// delete node
-		if node.next == nil { // tail node
-			node.prev.next = nil
-			cache.tail = node.prev
-			node.prev = nil
-		} else { // normal node
-			node.prev.next = node.next
-			node.next.prev = node.prev
-			node.next, node.prev = nil, nil
-		}
+		nodeDelete(node)
 		// update (key value) pair
 		node.val = value
 	}
 
 	// insert node
-	if cache.head == nil {
-		cache.head = node
-		cache.tail = node
-	} else {
-		node.next = cache.head
-		cache.head.prev = node
-		cache.head = node
-	}
-
+	nodeInsert(cache.head, node)
 	// update hash map
 	cache.hmap[key] = node
 
@@ -111,12 +106,9 @@ func (cache *LRUCache) put(key, value int64) {
 	if !isUpdate {
 		cache.count++
 		if cache.count > cache.capacity {
-			cache.tail.prev.next = nil
-			tmp := cache.tail
-			cache.tail = cache.tail.prev
-			tmp.prev = nil
-
-			delete(cache.hmap, tmp.key)
+			node := cache.tail.prev
+			delete(cache.hmap, node.key)
+			nodeDelete(node)
 			cache.count--
 		}
 	}
@@ -135,7 +127,7 @@ func (cache *LRUCache) print() {
 
 func (cache *LRUCache) printSequential() {
 	fmt.Printf("count: %d\n", cache.count)
-	for p := cache.head; p != nil; p = p.next {
+	for p := cache.head.next; p != cache.tail; p = p.next {
 		fmt.Printf("key: %d, value: %d\n", p.key, p.val)
 	}
 	fmt.Println()
@@ -148,7 +140,7 @@ func main() {
 		cache.put(int64(i), int64(i+100))
 	}
 	cache.printSequential()
-	//cache.print()
+	cache.print()
 
 	cache.put(int64(8), int64(88888))
 	cache.printSequential()

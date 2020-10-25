@@ -1,0 +1,8 @@
+
+c++ 版本
+solution1.cpp,solution2.cpp 利用现有容器实现链表的插入和删除
+solution.cpp自己实现链表逻辑
+
+go 版本 
+cache2.go对链表方法进行了抽象处理，同时新增虚拟头结点和尾结点；
+cache.go版本代码耦合在一起，初始设计
