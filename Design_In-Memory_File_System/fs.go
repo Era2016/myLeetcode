@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+import "strings"
 
 type node struct {
 	is_dir bool             // flag, judge whether dir
@@ -14,14 +15,109 @@ type FileSystem struct {
 }
 
 func (this *node) isDir() bool          { return this.is_dir }
-func (this *node) getName()             { return this.name }
-func (this *node) write(content string) { this.data = append(this.data, content) }
+func (this *node) getName() string      { return this.name }
+func (this *node) write(content string) { this.data += content }
 func (this *node) read() string         { return this.data }
 
-func FileSystem() *FileSystem                                   { return &FileSystem{} }
-func (this *FileSystem) ls(path string) []string                {}
-func (this *FileSystem) mkdir(path string)                      {}
-func (this *FileSystem) addContentToFile(path, content string)  {}
-func (this *FileSystem) readContentFromFile(path string) string {}
+func (this *node) ls() []string {
+	if this.is_dir == false {
+		return []string{this.getName()}
+	}
+	dirs := []string{}
+	for k, _ := range this.next {
+		dirs = append(dirs, k)
+	}
+	return dirs
+}
 
-func main() {}
+func NewFileSystem() *FileSystem {
+	pNode := node{
+		is_dir: true,
+		name:   "",
+	}
+	fs := FileSystem{root: &pNode}
+	return &fs
+}
+
+func (fs *FileSystem) ls(path string) []string {
+	var ok bool
+	dirs := fs.tokenize(path)
+	cur := fs.root
+
+	// for i := 0; i < len(dirs); i ++ {
+	// 	if cur, ok = cur.next[dirs[i]]; !ok {
+	// 		return []string{}
+	// 	}
+	// }
+	for _, v := range dirs {
+		if cur, ok = cur.next[v]; !ok {
+			return []string{}
+		}
+	}
+	return cur.ls()
+}
+
+func (fs *FileSystem) mkdir(path string) {
+	dirs := fs.tokenize(path)
+	cur := fs.root
+	for _, v := range dirs {
+		if cur.next == nil {
+			cur.next = make(map[string]*node)
+		}
+
+		if _, ok := cur.next[v]; !ok {
+			cur.next[v] = &node{is_dir: true, name: v}
+		}
+		cur = cur.next[v]
+	}
+}
+
+func (fs *FileSystem) addContentToFile(path, content string) {
+	dirs := fs.tokenize(path)
+	cur := fs.root
+	for i := 0; i < len(dirs); i++ {
+		cur = cur.next[dirs[i]]
+	}
+
+	cur.write(content)
+	return
+}
+
+func (fs *FileSystem) readContentFromFile(path string) string {
+	dirs := fs.tokenize(path)
+	cur := fs.root
+	for i := 0; i < len(dirs); i++ {
+		cur = cur.next[dirs[i]]
+	}
+
+	return cur.read()
+}
+
+func (this *FileSystem) tokenize(path string) []string {
+	if path != "/" {
+		return strings.Split(strings.TrimRight(path, "/"), "/")
+	}
+	return []string{"/"}
+}
+
+func main() {
+	fs := NewFileSystem()
+	var ret []string
+
+	fs.mkdir("/a/b/c/d")
+	ret = fs.ls("/a/b/")
+	fmt.Println(ret)
+
+	fs.mkdir("/a/b/d")
+	ret = fs.ls("/a/b")
+	fmt.Println(ret)
+	ret = fs.ls("/a")
+	fmt.Println(ret)
+	ret = fs.ls("/")
+	fmt.Println(ret)
+
+	//fs.mkdir("/a")
+	//ret = fs.ls("/a")
+	//fmt.Println(ret)
+
+}
