@@ -20,9 +20,10 @@ func (this *node) write(content string) { this.data += content }
 func (this *node) read() string         { return this.data }
 
 func (this *node) ls() []string {
-	if this.is_dir == false {
+	if this.is_dir == false || this.getName() == "/" {
 		return []string{this.getName()}
 	}
+
 	dirs := []string{}
 	for k, _ := range this.next {
 		dirs = append(dirs, k)
@@ -33,7 +34,7 @@ func (this *node) ls() []string {
 func NewFileSystem() *FileSystem {
 	pNode := node{
 		is_dir: true,
-		name:   "",
+		name:   "/",
 	}
 	fs := FileSystem{root: &pNode}
 	return &fs
@@ -44,16 +45,22 @@ func (fs *FileSystem) ls(path string) []string {
 	dirs := fs.tokenize(path)
 	cur := fs.root
 
-	// for i := 0; i < len(dirs); i ++ {
-	// 	if cur, ok = cur.next[dirs[i]]; !ok {
-	// 		return []string{}
-	// 	}
-	// }
+	//for i := 0; i < len(dirs); i++ {
+	//	if dirs[i] == "/" {
+	//		goto END
+	//	} else if cur, ok = cur.next[dirs[i]]; !ok {
+	//		return []string{}
+	//	}
+	//}
+
 	for _, v := range dirs {
-		if cur, ok = cur.next[v]; !ok {
+		if v == "/" {
+			goto END
+		} else if cur, ok = cur.next[v]; !ok {
 			return []string{}
 		}
 	}
+END:
 	return cur.ls()
 }
 
@@ -116,8 +123,8 @@ func main() {
 	ret = fs.ls("/")
 	fmt.Println(ret)
 
-	//fs.mkdir("/a")
-	//ret = fs.ls("/a")
-	//fmt.Println(ret)
+	fs.mkdir("/a")
+	ret = fs.ls("/a")
+	fmt.Println(ret)
 
 }
