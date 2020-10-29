@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "strings"
+import "sort"
 
 type node struct {
 	is_dir bool             // flag, judge whether dir
@@ -20,7 +21,8 @@ func (this *node) write(content string) { this.data += content }
 func (this *node) read() string         { return this.data }
 
 func (this *node) ls() []string {
-	if this.is_dir == false || this.getName() == "/" {
+	//if this.is_dir == false || this.getName() == "/" {
+	if this.is_dir == false {
 		return []string{this.getName()}
 	}
 
@@ -28,13 +30,15 @@ func (this *node) ls() []string {
 	for k, _ := range this.next {
 		dirs = append(dirs, k)
 	}
+	sort.Strings(dirs)
 	return dirs
 }
 
 func NewFileSystem() *FileSystem {
+	// 虚拟头结点，不存储路径信息
 	pNode := node{
 		is_dir: true,
-		name:   "/",
+		name:   "",
 	}
 	fs := FileSystem{root: &pNode}
 	return &fs
@@ -42,31 +46,19 @@ func NewFileSystem() *FileSystem {
 
 func (fs *FileSystem) ls(path string) []string {
 	var ok bool
-	dirs := fs.tokenize(path)
-	cur := fs.root
-
-	//for i := 0; i < len(dirs); i++ {
-	//	if dirs[i] == "/" {
-	//		goto END
-	//	} else if cur, ok = cur.next[dirs[i]]; !ok {
-	//		return []string{}
-	//	}
-	//}
+	dirs, cur := fs.tokenize(path), fs.root
 
 	for _, v := range dirs {
-		if v == "/" {
-			goto END
-		} else if cur, ok = cur.next[v]; !ok {
+		if cur, ok = cur.next[v]; !ok {
 			return []string{}
 		}
 	}
-END:
 	return cur.ls()
 }
 
 func (fs *FileSystem) mkdir(path string) {
-	dirs := fs.tokenize(path)
-	cur := fs.root
+	dirs, cur := fs.tokenize(path), fs.root
+
 	for _, v := range dirs {
 		if cur.next == nil {
 			cur.next = make(map[string]*node)
@@ -80,51 +72,68 @@ func (fs *FileSystem) mkdir(path string) {
 }
 
 func (fs *FileSystem) addContentToFile(path, content string) {
-	dirs := fs.tokenize(path)
-	cur := fs.root
-	for i := 0; i < len(dirs); i++ {
-		cur = cur.next[dirs[i]]
+	var ok bool
+	dirs, cur := fs.tokenize(path), fs.root
+
+	for i := 0; i < len(dirs)-1; i++ {
+		if cur, ok = cur.next[dirs[i]]; !ok {
+			return
+		}
 	}
 
+	fileName := dirs[len(dirs)-1]
+	cur.next[fileName] = &node{is_dir: false, name: fileName}
 	cur.write(content)
+
 	return
 }
 
 func (fs *FileSystem) readContentFromFile(path string) string {
-	dirs := fs.tokenize(path)
-	cur := fs.root
-	for i := 0; i < len(dirs); i++ {
-		cur = cur.next[dirs[i]]
+	var ok bool
+	dirs, cur := fs.tokenize(path), fs.root
+
+	for i := 0; i < len(dirs)-1; i++ {
+		if cur, ok = cur.next[dirs[i]]; !ok {
+			return ""
+		}
 	}
 
 	return cur.read()
 }
 
 func (this *FileSystem) tokenize(path string) []string {
-	if path != "/" {
-		return strings.Split(strings.TrimRight(path, "/"), "/")
-	}
-	return []string{"/"}
+	dirs := []string{"/"} // 特殊头结点 / ,所有目录以/ 起始
+	// 去除目录末尾/ 标识，便于统一处理节点信息
+	dirs = append(dirs, strings.Split(strings.TrimRight(path, "/"), "/")...)
+	return dirs
 }
 
 func main() {
 	fs := NewFileSystem()
 	var ret []string
+	ret = fs.ls("/")
+	fmt.Printf("ls /, ret: %v\n", ret)
 
 	fs.mkdir("/a/b/c/d")
 	ret = fs.ls("/a/b/")
-	fmt.Println(ret)
+	fmt.Printf("ls /a/b/, ret: %v\n", ret)
 
 	fs.mkdir("/a/b/d")
 	ret = fs.ls("/a/b")
-	fmt.Println(ret)
+	fmt.Printf("ls /a/b, ret: %v\n", ret)
 	ret = fs.ls("/a")
-	fmt.Println(ret)
+	fmt.Printf("ls /a, ret: %v\n", ret)
 	ret = fs.ls("/")
-	fmt.Println(ret)
+	fmt.Printf("ls /, ret: %v\n", ret)
 
 	fs.mkdir("/a")
 	ret = fs.ls("/a")
-	fmt.Println(ret)
+	fmt.Printf("ls /a, ret: %v\n", ret)
+
+	fs.addContentToFile("/a/b/file.txt", "hello world")
+	fmt.Println(fs.readContentFromFile("/a/b/file.txt"))
+
+	ret = fs.ls("/a/b")
+	fmt.Printf("ls /a/b, ret: %v\n", ret)
 
 }
