@@ -10,6 +10,7 @@ public:
         root = new Directory("");
     }
 
+    // 缺少目录是否存在的判断，如果ls 一个不存在的目录，会出现空指针的问题
     vector<string> ls(string path) {
         vector<string> tokens = tokenize(path);
         Node* cur = root;
@@ -152,7 +153,11 @@ private:
 int main() {
     FileSystem* fs = new FileSystem();
     vector<string> v;
-    v = fs->ls("/");
+    v = fs->ls("/"); // ls /a/b -> exception
+    for (auto iter : v) {
+        cout << iter << endl;
+    }
+
     fs->mkdir("/a/b/c");
     v = fs->ls("/a");
     for (auto iter : v) {
