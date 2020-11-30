@@ -15,49 +15,27 @@ struct TreeNode {
 
 class Solution {
 public:
-    vector<vector<int> > zigzagLevelOrder(TreeNode* root) {
+    vector<vector<int> > levelTravel(TreeNode* root) {
+        if (root == nullptr) return {};
+
         vector<vector<int> > vv;
-        //dfsWithRecursive(vv, root, 0);
-        
-        if (!root) return {};
-        dfs(vv, root);
-        return vv;
-    }
-
-private:
-    void dfs(vector<vector<int> >& vv, TreeNode* root) {
-        vector<int> v;
-        int level = 0;
-        queue<TreeNode*> q;
-        
+        queue<TreeNode*> q; 
         q.push(root);
-        while (!q.empty()) {
-            vector<int> v;
-            int sz = q.size();
-            for (int i = 0; i < sz; i ++) {
-                TreeNode* node = q.front();
-                q.pop();
-                if (level % 2 == 0) { v.push_back(node->val); }
-                else { v.insert(v.begin(), node->val); }
 
+        while (!q.empty()) {
+            int sz = q.size();
+            vector<int> v(sz);
+            for (int i = 0; i < sz; i ++) {
+                TreeNode* node = q.front(); 
+                q.pop();
+                //v.push_back(node->val);
+                v[i] = node->val;
                 if (node->left) { q.push(node->left); }
                 if (node->right) { q.push(node->right); }
             }
-            vv.push_back(v);
-            level ++;
+            vv.push_back(v);                
         }
-    }
-
-    void dfsWithRecursive(vector<vector<int> >& vv, TreeNode* root, int level) {
-        if (root == nullptr) return;
-
-        if (level >= (int)vv.size()) { vv.push_back(vector<int>{}); }
-    
-        if (level % 2 == 0) { vv[level].push_back(root->val); }
-        else { vv[level].insert(vv[level].begin(), root->val); }
-
-        dfsWithRecursive(vv, root->left, level+1);
-        dfsWithRecursive(vv, root->right, level+1);
+        return vv;
     }
 };
 
@@ -70,11 +48,12 @@ void print(vector<vector<int> > vv) {
         cout << endl;
     }
 }
+
 int main() {
     TreeNode* node = new TreeNode(3);
     TreeNode* node1 = new TreeNode(9); TreeNode* node2 = new TreeNode(20); node->left = node1; node->right = node2; 
     TreeNode* node3 = new TreeNode(15); TreeNode* node4 = new TreeNode(7); node2->left = node3; node2->right = node4; 
     Solution* so = new Solution();
-    vector<vector<int> > vv = so->zigzagLevelOrder(node);
+    vector<vector<int> > vv = so->levelTravel(node);
     print(vv);
 }
