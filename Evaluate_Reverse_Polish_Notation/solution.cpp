@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <stack>
-#include <cctype>
 
 using namespace std;
+void print(stack<string> s);
 
 class Solution {
 public:
@@ -11,7 +11,7 @@ public:
         stack<string> s;
         int ret = 0;
         for (int i = 0; i < (int)tokens.size(); i ++) {
-            if (isNumber(tokens[i])) { s.push(tokens[i]); } 
+            if (!isOperator(tokens[i])) { s.push(tokens[i]); } 
             else {
                 int a = stoi(s.top()); s.pop();
                 int b = stoi(s.top()); s.pop();
@@ -27,13 +27,19 @@ public:
         return ret;
     }
 private:
-    bool isNumber(string s) {
-        for (int i = 0; i < (int)s.size(); i ++) {
-            if (!isdigit(s[i])) return false;
-        }
-        return true;
+    bool isOperator(string s) {
+        if (s == "+" || s == "-" || s == "*" || s == "/") { return true; }
+        return false;
     }
 };
+
+void print(stack<string> s) {
+    while (!s.empty()) {
+        cout << s.top() << "\t";
+        s.pop();
+    }
+    cout << endl;
+}
 
 int main() {
     Solution* so = new Solution();
