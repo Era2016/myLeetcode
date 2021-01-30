@@ -15,10 +15,15 @@ struct TreeNode {
 
 class Solution {
 public:
-    vector<int> levelTravel(TreeNode* root) {
-        vector<int> v;
-        queue<TreeNode*> q; 
-        if (root) { q.push(root); }
+    // bfs
+    vector<vector<int> > levelOrder(TreeNode* root) {
+        vector<vector<int> > vv; vector<int> v;
+        queue<TreeNode*> q; int qLength;
+
+        if (root) { 
+            q.push(root); qLength = 1; 
+        }
+
         while (!q.empty()) {
             TreeNode* pNode = q.front(); q.pop();
             //cout <<"val: " << pNode->val << endl;
@@ -26,13 +31,35 @@ public:
 
             if (pNode->left) { q.push(pNode->left); }
             if (pNode->right) { q.push(pNode->right); }
+
+            if (--qLength == 0) {
+                vv.push_back(v); v.clear();
+                qLength = (int)q.size();
+            }
         }
-        return v;
+        return vv;
+    }
+
+    // dfs, preorder: awesome !!
+    vector<vector<int> > levelOrderV2(TreeNode* root) {
+        vector<vector<int> > vv;
+        __levelOrderV2(root, vv, 0); 
+        return vv;
+    }
+private:
+    void __levelOrderV2(TreeNode* root, vector<vector<int> >& vv, int depth) {
+        if (root == nullptr) return;
+        if ((int)vv.size() == depth) {
+            vv.push_back(vector<int> ()); 
+        }
+        vv[depth].push_back(root->val);
+        __levelOrderV2(root->left, vv, depth+1);
+        __levelOrderV2(root->right, vv, depth+1);
     }
 };
 
 int main() {
-    vector<int> v;
+    vector<vector<int> > vv;
     Solution* so = new Solution();
 
     TreeNode* node1 = new TreeNode(1);
@@ -43,9 +70,22 @@ int main() {
     node2->left = node4; node2->right = node5;
     node3->left = node6; node3->right = node7;
 
-    v = so->levelTravel(node1); 
-    for (int i = 0; i < (int)v.size(); i ++) {
-        cout << v[i] << "\t"; // 1 3 6 4 7 5 8 
+    vv = so->levelOrder(node1); 
+    for (int i = 0; i < (int)vv.size(); i ++) {
+        for (int j = 0; j < (int)vv[i].size(); j ++) {
+            cout << vv[i][j] << "\t"; // 1 3 6 4 7 5 8 
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+
+    vv = so->levelOrderV2(node1);
+    for (int i = 0; i < (int)vv.size(); i ++) {
+        for (int j = 0; j < (int)vv[i].size(); j ++) {
+            cout << vv[i][j] << "\t"; // 1 3 6 4 7 5 8 
+        }
+        cout << endl;
     }
     cout << endl;
 }
