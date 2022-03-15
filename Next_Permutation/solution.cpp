@@ -1,100 +1,71 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
 
 using namespace std;
+void print(vector<int>);
 
 class Solution {
-    public:
-        void nextPermutation(vector<int>& nums) {
-            int length = nums.size();
-            bool find = false;
-            int index;
-            //cout << length << endl;
-            //print(nums);
-            for (index = length - 1; index > 0; -- index) {
-                if (nums[index-1] < nums[index]) {
-                    find = true;
-                    //cout << "find" << endl;
-                    break;
-                }
+public:
+    void nextPermutation(vector<int>& nums) {
+        // 遍历数组，找到从后算递增的第一个数组下标
+        // 选择该下标后数组中刚刚大于该数组下标值，交换元素
+        // 交换后，将后面数组按升序排列
+        int length = nums.size();
+        int index = length - 1;
+        for (int i = length - 1; i >= 0; i --) {
+            if (i >= 1 && nums[i] > nums[i-1]) {
+                index = i - 1;
+                break;
             }
-            if (!find) {
-                reverse(nums.begin(), nums.end());
-                print(nums);
-                return;
-            } else {
-                replace(nums, index, length);
-                print(nums);
-                return;
-            }
-        }            
-
-        void replace(vector<int>& v, int target, int length) {
-            int temp = v[target-1];
-            int index = -1;
-            //partial_sort(v.begin()+target-1, v.end(), v.end(), less<int>()); 
-            for (int i = length - 1; i > target - 1; -- i) {
-                if (v[i] > temp) {
-                    swap(v[target-1], v[i]);
-                    break;
-                }
-            }   
-            //swap(v[target-1], v[index]);
-            // 堆排序
-            //partial_sort(v.begin()+target, v.end(), v.end(), less<int>());
-            // 快排+插入排序
-            sort(v.begin()+target, v.end());
         }
 
-        void print(vector<int> v) {
-            for (vector<int>::iterator iter = v.begin(); iter != v.end(); ++ iter) {
-                cout << *iter;
+        int minNums = INT_MIN, minIndex = index;
+        for (int i = index + 1; i < length; i ++) {
+            if (nums[i] > nums[index]) {
+                minNums = min(minNums, nums[i]);
+                minIndex = i;
             }
-            cout << endl;
-        }
+        } 
 
-        void nextPermutation_v2(vector<int>& nums) {
-            int k = -1;
-            
-            // Find the largest index k such that nums[k] < nums[k + 1].
-            for (int i = nums.size() - 2; i >= 0; i--) {
-                if (nums[i] < nums[i + 1]) {
-                    k = i;
-                    break;
-                }
-            }
-            // the permutation is sorted in descending order
-            if (k == -1) {
-                reverse(nums.begin(), nums.end());
-                return;
-            }
-            
-            // Find the largest index l greater than k such that nums[k] < nums[l].
-            int l = -1;
-            for (int i = nums.size() - 1; i > k; i--) {
-                if (nums[i] > nums[k]) {
-                    l = i;
-                    break;
-                } 
-            } 
-            swap(nums[k], nums[l]);
-            // reverse(nums.begin() + k + 1, nums.end());
-            sort(nums.begin() + k + 1, nums.end());
+        //cout << "index: " << index << "\t minIndex: " << minIndex << endl;
+        swap(nums[index], nums[minIndex]);
+        if (index == length - 1) { // 数组已是倒叙排列，需转换成正序输出
+            sort(nums.begin(), nums.end());
+        } else {
+            sort(nums.begin()+index+1, nums.end());
         }
+    }
+
+    void nextPermutation_v2(vector<int>& nums) {
+        int i = nums.size() - 2;
+        while (i >= 0 && nums[i] >= nums[i + 1]) {
+            i--;
+        }
+        if (i >= 0) {
+            int j = nums.size() - 1;
+            while (j >= 0 && nums[i] >= nums[j]) {
+                j--;
+            }
+            swap(nums[i], nums[j]);
+        }
+        reverse(nums.begin() + i + 1, nums.end());
+    }
 };
 
+void print(vector<int> v) {
+    for (vector<int>::iterator it = v.begin(); it != v.end(); it ++) {
+        cout << *it << "\t";
+    }
+    cout << endl;
+}
 
-int main()
-{
+int main() {
+    //vector<int> v = {1,2,3,4,5,6}; // 123465
+    //vector<int> v = {1,2,4,6,5,3}; // 125346
+    //vector<int> v = {1}; // 
+    vector<int> v = {3,2,1}; // 321
     Solution* so = new Solution();
-    vector<int> v;
-    v.push_back(2);
-    v.push_back(3);
-    v.push_back(1); 
-
-    //so->nextPermutation(v);   
-    so->nextPermutation_v2(v);
-    so->print(v);
-    return 0;
+    print(v);
+    so->nextPermutation(v);
+    print(v);
 }
