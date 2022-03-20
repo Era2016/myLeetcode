@@ -3,6 +3,9 @@
 
 using namespace std;
 
+void print(vector<int>);
+void print(vector<vector<int>>);
+
 class Solution {
 public:
     vector<vector<int>> permute(vector<int>& nums) {
@@ -23,9 +26,11 @@ public:
             if (!used[i]) {
                 used[i] = true;
                 v.push_back(nums[i]);
+                //print(v); // 输出中间结果
                 dfs(nums, v, vv, used, depth + 1);
                 used[i] = false;
                 v.pop_back();
+                //print(v); // 输出中间结果
             }
         }
     }
@@ -41,10 +46,16 @@ void print(vector<vector<int>> vv) {
     cout << endl;
 }
 
+void print(vector<int> v) {
+    for (vector<int>::iterator it = v.begin(); it != v.end(); it ++)
+        cout << *it << "\t";
+    cout << endl;
+}
+
 int main() {
-    //vector<int> v = {1, 2, 3};
+    vector<int> v = {1, 2, 3};
     //vector<int> v = {0, 1};
-    vector<int> v = {1};
+    //vector<int> v = {1};
 
     vector<vector<int>> vv;
     Solution* so = new Solution();
