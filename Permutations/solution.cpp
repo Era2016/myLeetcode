@@ -5,41 +5,49 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int> > permute(vector<int>& nums) {
-		vector<vector<int> > vv;
-       	permutation(vv, nums, 0); 
-		return vv;
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<int> v;
+        vector<vector<int>> vv;
+        vector<int> used(nums.size(), 0);
+        dfs(nums, v, vv, used, 0);
+        return vv;
     }
 
-private:
-	void permutation(vector<vector<int> >& vv, vector<int>& v, int begin) {
-		if (begin == (int)v.size()) {
-			vv.push_back(v);
-			return;
-		}	
+    void dfs(vector<int>& nums, vector<int>& v, vector<vector<int>>& vv, vector<int>& used, int depth) {
+        if (depth == nums.size()) {
+            vv.push_back(v);
+            return;
+        }
 
-		for (int i = begin; i < (int)v.size(); i ++) {
-			swap(v[i], v[begin]);
-			permutation(vv, v, begin+1);
-			swap(v[i], v[begin]);
-		}
-	}
+        for (int i = 0; i < nums.size(); i ++) {
+            if (!used[i]) {
+                used[i] = true;
+                v.push_back(nums[i]);
+                dfs(nums, v, vv, used, depth + 1);
+                used[i] = false;
+                v.pop_back();
+            }
+        }
+    }
 };
 
-void print(vector<vector<int> > vv) {
-	for (int i = 0; i < (int)vv.size(); i ++) {
-		for (int j = 0; j < (int) vv[0].size(); j ++) {
-			cout << vv[i][j] << "\t";
-		}
-		cout << endl;
-	}
-	cout << endl;
+void print(vector<vector<int>> vv) {
+    for (vector<vector<int>>::iterator it = vv.begin(); it != vv.end(); it ++) {
+        for (vector<int>::iterator i = (*it).begin(); i != (*it).end(); i ++) {
+            cout << *i << "\t";
+        }
+        cout << endl;
+    }
+    cout << endl;
 }
 
 int main() {
-	vector<vector<int> > vv;
-	vector<int> nums = {1,2,3};
-	Solution* so = new Solution();
-	vv = so->permute(nums);
-	print(vv);
+    //vector<int> v = {1, 2, 3};
+    //vector<int> v = {0, 1};
+    vector<int> v = {1};
+
+    vector<vector<int>> vv;
+    Solution* so = new Solution();
+    vv = so->permute(v);
+    print(vv);
 }
