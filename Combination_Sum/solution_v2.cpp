@@ -9,6 +9,7 @@ public:
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         vector<vector<int>> ans;
         vector<int> combine;
+        // 排序后，可以进一步剪枝，减少复杂度
         sort(candidates.begin(), candidates.end());
         dfs(candidates, target, ans, combine, 0);
         return ans;
