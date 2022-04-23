@@ -76,11 +76,11 @@ void print(vector<vector<int>>& vv) {
 }
 
 int main() {
-    //vector<int> v =  {10,1,2,7,6,1,5};
-    //int target = 8;
+    vector<int> v =  {10,1,2,7,6,1,5};
+    int target = 8;
 
-    vector<int> v = {2,5,2,1,2};
-    int target = 5;
+    //vector<int> v = {2,5,2,1,2};
+    //int target = 5;
 
     Solution* so = new Solution();
     vector<vector<int>> vv = so->combinationSum2(v, target); 
