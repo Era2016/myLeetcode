@@ -1,44 +1,64 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
-
+void print(vector<vector<int>>& vv);
 class Solution {
-    public:
-        void rotate(vector<vector<int> >& matrix) {
-            int n = matrix.size();
-            for (int i = 0; i < n / 2; ++i) {
-                for (int j = i; j < n - 1 - i; ++j) {
-                    int tmp = matrix[i][j];
-                    matrix[i][j] = matrix[n - 1 - j][i];
-                    matrix[n - 1 - j][i] = matrix[n - 1 - i][n - 1 - j];
-                    matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 - i];
-                    matrix[j][n - 1 - i] = tmp;
-                }
+public:
+    void rotate(vector<vector<int>>& matrix) {
+        int count = matrix.size();
+        for (int i = 0; i < count; i ++) {
+            for (int j = i; j < count; j ++) {
+                swap(matrix[i][j], matrix[j][i]);
             }
         }
+        //print(matrix);
+
+        for (int i = 0; i < count; i ++) {
+            for (int j = 0; j < count/2; j ++) {
+                swap(matrix[i][j], matrix[i][count-j-1]);
+            }
+        }
+        //print(matrix);
+    }
 };
 
-int main()
-{
-	Solution* so = new Solution();
-	vector<vector<int> > matrix;
-
-	vector<int> row;
-	for (int i = 1; i <= 25; i ++) {
-		row.push_back(i);
-		if (i % 5 == 0) {
-			matrix.push_back(row);
-			row.clear();
-		}
-	}
-
-	so->rotate(matrix);
-	for (vector<vector<int> >::iterator iter = matrix.begin(); iter != matrix.end(); ++ iter) {
-        for (vector<int>::iterator it = iter->begin(); it != iter->end(); ++ it) {
-            cout << *it << " ";
+void print(vector<vector<int>>& vv) {
+    for (auto v: vv) {
+        for (auto i: v) {
+            cout << i << " ";
         }
         cout << endl;
     }
-    return 0;
+
+    cout << endl;
+}
+
+vector<vector<int>> genVectors(int m, int n) {
+    vector<vector<int>> vv(m, vector<int>(n));
+    for (auto& v: vv) {
+        //generate(v.begin(), v.end(), [i=0]() mutable{return i++;});
+        generate(v.begin(), v.end(), []() {return rand()%10; });
+    }
+    return vv;
+}
+
+int main() {
+    Solution* so = new Solution();
+
+    // 3*3
+    auto vv = genVectors(3,3);
+    print(vv);
+
+    so->rotate(vv);
+    print(vv);
+
+
+    // 4*4
+    vv = genVectors(4,4);
+    print(vv);
+
+    so->rotate(vv);
+    print(vv);
 }
