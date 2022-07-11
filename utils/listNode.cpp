@@ -5,19 +5,16 @@
 ListNode* createList(std::vector<int>& v) {
     if (v.empty()) return nullptr;
     
-    ListNode *pHead, *ptr;
+    ListNode *dummy = new ListNode(-1), *ptr = dummy;
     for (int i = 0; i < v.size(); i ++) {
     //for (auto k: v) {
         ListNode* p = new ListNode(v[i]);
-        if (i == 0) { 
-            pHead = p; ptr = p;
-        }
         
         ptr->next = p;
         ptr = p;
     }
 
-    return pHead;
+    return dummy->next;
 }
 
 void showList(ListNode* p) {
@@ -27,4 +24,19 @@ void showList(ListNode* p) {
     }
 
     std::cout << std::endl << std::endl;
+}
+
+ListNode* reverse(ListNode* head) {
+    ListNode* dummy = new ListNode(-1), *pHead = dummy;
+    ListNode* ptr = head;
+    while (ptr) {
+        ListNode* tmp = ptr->next;
+
+        ptr->next = dummy->next;
+        dummy->next = ptr;
+
+        ptr = tmp;
+    }
+    //dummy->next = nullptr;
+    return pHead->next;
 }

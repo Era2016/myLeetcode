@@ -7,3 +7,4 @@ struct ListNode {
 
 ListNode* createList(std::vector<int>& v);
 void showList(ListNode* p);
+ListNode* reverse(ListNode* head); 
