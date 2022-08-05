@@ -3,7 +3,9 @@
 struct ListNode {
     int val;
     ListNode *next;
+    ListNode() : val(-1), next(NULL) {}
     ListNode(int x) : val(x), next(NULL) {}
+    ListNode(const ListNode& l) : val(l.val), next(l.next) {}
 };
 
 ListNode* createList(std::vector<int>& v);
