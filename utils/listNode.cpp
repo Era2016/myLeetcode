@@ -58,6 +58,43 @@ ListNode* reverse(ListNode* head) {
     return pHead->next;
 }
 
+// a->b->c->d->e->f
+// a->d->c->b->e->f
+ListNode* reverseBetween(ListNode* head, int left, int right) {
+    int index = 1;
+    ListNode *ptr = head;
+
+    ListNode *prev1 = nullptr;
+    while (ptr != nullptr && index < left) {
+        prev1 = ptr;
+        ptr = ptr->next; index ++;
+    } // ptr == b, prev1 == a
+
+    ListNode *dummy = new ListNode();//, *pTmpHead = dummy;
+    ListNode *prev2 = nullptr;
+    while (ptr != nullptr && index <= right) {
+        ListNode *tmp = ptr->next;
+        prev2 = ptr;
+
+        ptr->next = dummy->next;
+        dummy->next = ptr;
+
+        ptr = tmp;
+        index ++;
+    } // ptr == e, prev2 == d
+
+    if (prev1 == nullptr) {
+        head->next = ptr;
+        head = prev2;
+    } else {
+        prev1->next->next = ptr;
+        prev1->next = prev2;
+    }
+
+    return head;
+}
+
+
 bool isCycle(ListNode* head, ListNode* pCross) {
     ListNode *fast = head, *slow = head;
     while (fast && fast->next) {

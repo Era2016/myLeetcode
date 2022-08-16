@@ -16,5 +16,6 @@ ListNode* createRingList(std::vector<int>& v, int pos);
 void showList(ListNode* p);
 
 ListNode* reverse(ListNode* head); 
+ListNode* reverseBetween(ListNode* head, int left, int right);
 
 bool isCycle (ListNode* head, ListNode* pCross);
