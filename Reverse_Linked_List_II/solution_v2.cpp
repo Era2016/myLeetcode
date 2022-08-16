@@ -1,40 +1,44 @@
 #include <iostream>
 #include <vector>
-
 #include "../utils/listNode.h"
 
 using std::vector;
-
-/*
- * curr：指向待反转区域的第一个节点 left；
- * next：永远指向 curr 的下一个节点，循环过程中，curr 变化以后 next 会变化；
- * pre：永远指向待反转区域的第一个节点 left 的前一个节点，在循环过程中不变。
- *
- */
-
 // a->b->c->d->e->f
-// a->c->b->d->e->f
+// a->d->c->b->e->f
 class Solution {
 public:
     ListNode* reverseBetween(ListNode* head, int left, int right) {
-        ListNode *dummyNode = new ListNode(-1);
-        dummyNode->next = head;
-        ListNode *pre = dummyNode;
-        for (int i = 0; i < left - 1; i ++) {
-            pre = pre->next;
+        int index = 1;
+        ListNode *ptr = head;
+
+        ListNode *prev1 = nullptr;
+        while (ptr != nullptr && index < left) {
+            prev1 = ptr;
+            ptr = ptr->next; index ++;
+        } // ptr == b, prev1 == a
+
+        ListNode *dummy = new ListNode();//, *pTmpHead = dummy;
+        ListNode *prev2 = nullptr;
+        while (ptr != nullptr && index <= right) {
+            ListNode *tmp = ptr->next;
+            prev2 = ptr;
+                
+            ptr->next = dummy->next;
+            dummy->next = ptr;
+
+            ptr = tmp;
+            index ++;
+        } // ptr == e, prev2 == d
+
+        if (prev1 == nullptr) {
+            head->next = ptr;
+            head = prev2;
+        } else {
+            prev1->next->next = ptr;
+            prev1->next = prev2; 
         }
 
-        ListNode *cur = pre->next;  // cur -> b; pre -> a
-        ListNode *next;             // next ->c;
-        for (int i = 0; i < right - left; i ++) {
-            next = cur->next;
-
-            cur->next = next->next;
-            next->next = pre->next;
-            pre->next = next;
-        }
-
-        return dummyNode->next;
+        return head;
     }
 };
 

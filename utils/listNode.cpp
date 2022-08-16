@@ -60,7 +60,7 @@ ListNode* reverse(ListNode* head) {
 
 // a->b->c->d->e->f
 // a->d->c->b->e->f
-ListNode* reverseBetween(ListNode* head, int left, int right) {
+ListNode* reverseBetween_v2(ListNode* head, int left, int right) {
     int index = 1;
     ListNode *ptr = head;
 
@@ -94,6 +94,62 @@ ListNode* reverseBetween(ListNode* head, int left, int right) {
     return head;
 }
 
+/*
+ * curr：指向待反转区域的第一个节点 left；
+ * next：永远指向 curr 的下一个节点，循环过程中，curr 变化以后 next 会变化；
+ * pre：永远指向待反转区域的第一个节点 left 的前一个节点，在循环过程中不变。
+ *
+ */
+
+// a->b->c->d->e->f
+// a->c->b->d->e->f
+ListNode* reverseBetween(ListNode* head, int left, int right) {
+    ListNode *dummyNode = new ListNode(-1);
+    dummyNode->next = head;
+    ListNode *pre = dummyNode;
+    for (int i = 0; i < left - 1; i ++) {
+        pre = pre->next;
+    }
+
+    ListNode *cur = pre->next;  // cur -> b; pre -> a
+    ListNode *next;             // next ->c;
+    for (int i = 0; i < right - left; i ++) {
+        next = cur->next;
+
+        cur->next = next->next;
+        next->next = pre->next;
+        pre->next = next;
+    }
+
+    return dummyNode->next;
+}
+
+// 反转以 head 为起点的 n 个节点，返回新的头结点
+ListNode *successor;
+ListNode* reverseN(ListNode *head, int n) {
+    if (n == 1) {
+        // 记录第 n + 1 个节点
+        successor = head->next;
+        return head;
+    }
+    // 以 head.next 为起点，需要反转前 n - 1 个节点
+    ListNode *last = reverseN(head->next, n - 1);
+
+    head->next->next = head;
+    // 让反转之后的 head 节点和后面的节点连起来
+    head->next = successor;
+    return last;
+}
+
+ListNode* reverseBetweenRecursively(ListNode *head, int m, int n) {
+    // base case
+    if (m == 1) {
+        return reverseN(head, n);
+    }
+    // 前进到反转的起点触发 base case
+    head->next = reverseBetweenRecursively(head->next, m - 1, n - 1);
+    return head;
+}
 
 bool isCycle(ListNode* head, ListNode* pCross) {
     ListNode *fast = head, *slow = head;
