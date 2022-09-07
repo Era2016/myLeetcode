@@ -33,5 +33,5 @@ skiplist *slCreate(void);
 void slFree(skiplist *sl);
 skiplistNode *slInsert(skiplist *sl, double score, sds ele);
 int slDelete(skiplist *sl, double score, sds ele, skiplistNode **node);
-skiplistNode *slUpdate(skiplist *sl, double score, sds ele, double newscore);
+skiplistNode *slUpdateScore(skiplist *sl, double score, sds ele, double newscore);
 //int getRandomLevel(double p);

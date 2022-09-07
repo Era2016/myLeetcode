@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <assert.h>
 #include "skiplist.h"
 
 skiplistNode *slCreateNode(int level, double score, sds ele) {
@@ -14,6 +15,26 @@ skiplistNode *slCreateNode(int level, double score, sds ele) {
 
 void slDeleteNode(skiplist *sl, skiplistNode *x, skiplistNode **update) {
 
+    for (int i = 0; i < sl->level; i ++) {
+        if (update[i]->level[i].forward == x) {
+            update[i]->level[i].span += x->level[i].span - 1;
+            update[i]->level[i].forward = x->level[i].forward;
+        } else {
+            update[i]->level[i].span --;
+        }
+    }
+
+    if (x->level[0].forward) {
+        x->level[0].forward->backward = x->backward;
+    } else {
+        sl->tail = x->backward;
+    }
+
+    sl->length --;
+
+    while (sl->level > 1 && sl->header->level[sl->level-1].forward == NULL) {
+        sl->level --;
+    }
 }
 
 skiplist *slCreate(void) {
@@ -58,15 +79,16 @@ skiplistNode *slInsert(skiplist *sl, double score, sds ele) {
     skiplistNode *update[MAX_LEVEL], *x;
     int rank[MAX_LEVEL];
 
+    x = sl->header;
     for (int i = sl->level-1; i >= 0; i --) {
-        x = sl->header;
         rank[i] = (i == sl->level-1)? 0: rank[i+1];
-        while (x->level[i].forward && (
-            x->score < score || 
-            (x->score == score && strcmp(x->ele, ele) < 0))) {
+        while (x->level[i].forward &&
+                (x->level[i].forward->score < score || 
+                 (x->level[i].forward->score == score &&
+                  strcmp(x->level[i].forward->ele, ele) < 0))) {
 
-            x = x->level[i].forward;
             rank[i] += x->level[i].span;
+            x = x->level[i].forward;
         }
 
         update[i] = x;
@@ -107,48 +129,56 @@ int slDelete(skiplist *sl, double score, sds ele, skiplistNode **node) {
     skiplistNode *update[MAX_LEVEL], *x;
     x = sl->header;
     for (int i = sl->level-1; i >= 0; i --) {
-        while (x->level[i].forward && (x->score < score ||
-                    x->score == score && strcmp(x->ele, ele) < 0)) {
+        while (x->level[i].forward &&
+                (x->level[i].forward->score < score ||
+                 (x->level[i].forward->score == score &&
+                  strcmp(x->level[i].forward->ele, ele) < 0))) {
             x = x->level[i].forward;
         }
         update[i] = x;
     }
 
-
-    slDeleteNode(sl, x, update);
-    //for (int i = 0; i < sl->level; i ++) {
-    //    update[i]->level[i].forward = x->level[i].forward;
-    //    update[i]->level[i].span += x->level[i].span - 1;
-    //}
-
-    //if (update[0] == sl->header) {
-    //    sl->tail = x->level[0].forward;      
-    //}
-
-    //if (update[0]->backward) {
-    //    x->backward = update[0]->backward;
-    //}
-
-    ////free(x);
-    //*node = x;
-    //sl->length --;
-
-    //while (sl->header->level[sl->level-1].forward == NULL) {
-    //    sl->level --;
-    //}
-    return 1;
+    //x = update[0]->level[0].forward;
+    x = x->level[0].forward;
+    if (x && x->score == score && strcmp(x->ele, ele) == 0) {
+        slDeleteNode(sl, x, update);
+        if (node) {
+            *node = x;
+        } else {
+            free(x); 
+        }
+        return 1;
+    } 
+    return 0;
 }
 
-skiplistNode *slUpdate(skiplist *sl, double score, sds ele, double newscore) {
+skiplistNode *slUpdateScore(skiplist *sl, double score, sds ele, double newscore) {
     skiplistNode *update[MAX_LEVEL], *x;
     x = sl->header;
     for (int i = sl->level-1; i >= 0; i --) {
-        while (x->level[i].forward && (x->score < score || 
-                    x->score == score && strcmp(x->ele, ele))) {
+        while (x->level[i].forward && 
+                (x->level[i].forward->score < score || 
+                 x->level[i].forward->score == score &&
+                 strcmp(x->level[i].forward->ele, ele) == 0)) {
             x = x->level[i].forward;
         }
 
         update[i] = x;
     }
 
+    x = x->level[0].forward;
+    assert(x && x->score == score && strcmp(x->ele, ele) == 0);
+
+    if ((x->backward == NULL || x->backward->score < newscore) &&
+            (x->level[0].forward == NULL || x->level[0].forward->score > newscore)) {
+        x->score = newscore;
+        return x;
+    }
+
+    slDeleteNode(sl, x, update);
+    skiplistNode *node = slInsert(sl, newscore, x->ele);
+
+    x->ele = NULL;
+    free(x);
+    return node;
 }
