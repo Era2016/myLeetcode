@@ -9,9 +9,8 @@ using std::vector;
 class Solution {
 private:
     pair<ListNode*, ListNode*> reverseBetween(ListNode* head, ListNode* tail) {
-        pair<ListNode*, ListNode*> p;
         ListNode *pre = nullptr, *cur = head;
-        while (cur != tail) {
+        while (pre != tail) {
             ListNode *next = cur->next;
 
             cur->next = pre;
@@ -19,9 +18,7 @@ private:
             cur = next;
         }
 
-        p.first = tail;
-        p.second = head;
-        return p;
+        return {tail, head};
     }
 
 public:
@@ -32,12 +29,13 @@ public:
         ListNode *pre, *start, *end;
         pre = dummy;
         end = start = dummy->next;
-        while (dummy->next) {
+        while (start) {
             for (int i = 0; i < k-1; i ++) {
+                end = end->next;
                 if (end == nullptr)
                     return dummy->next;
-                end = end->next;
             }
+
             ListNode *next = end->next;
 
             pair<ListNode*, ListNode*> p = reverseBetween(start, end);
@@ -59,6 +57,18 @@ int main() {
     ListNode *head;
 
     v = {1,2,3,4,5,6};
+    head = createList(v);
+    showList(head);
+    head = so->reverseKGroup(head, 2);
+    showList(head);
+
+    v = {1,2,3,4,5,6,7};
+    head = createList(v);
+    showList(head);
+    head = so->reverseKGroup(head, 3);
+    showList(head);
+
+    v = {1,2,3,4,5};
     head = createList(v);
     showList(head);
     head = so->reverseKGroup(head, 2);
