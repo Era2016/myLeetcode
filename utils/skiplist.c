@@ -45,8 +45,8 @@ skiplist *slCreate(void) {
 
     sl->header = slCreateNode(MAX_LEVEL, 0, ""); 
     for (int j = 0; j < MAX_LEVEL; j ++) {
-        sl->header->level[0].forward = NULL;
-        sl->header->level[0].span = 0;
+        sl->header->level[j].forward = NULL;
+        sl->header->level[j].span = 0;
     }
 
     sl->header->backward = NULL;
