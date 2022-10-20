@@ -6,6 +6,7 @@
 using std::vector;
 
 /*
+ * 头插入法
  * curr：指向待反转区域的第一个节点 left；
  * next：永远指向 curr 的下一个节点，循环过程中，curr 变化以后 next 会变化；
  * pre：永远指向待反转区域的第一个节点 left 的前一个节点，在循环过程中不变。
@@ -14,6 +15,7 @@ using std::vector;
 
 // a->b->c->d->e->f
 // a->c->b->d->e->f
+// a->d->c->b->e->f
 class Solution {
 public:
     ListNode* reverseBetween(ListNode* head, int left, int right) {
