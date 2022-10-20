@@ -1,83 +1,65 @@
 #include <iostream>
-#include <vector>
-#include <string>
-#include <map>
+#include <unordered_map>
 
-using namespace std;
+using std::unordered_map;
+using std::string;
+
 class Solution {
-    public:
-        string minWindow(string s, string t) {
-            map<char, int> mm = this->initMap(t);
-            map<char, int>::iterator iter;
-            int minLength = 0;
-            int minLeft;
-            int left = 0;
-            for (int i = 0; i < (int)s.length(); ++ i) {
-                iter = mm.find(s[i]);
-                if (iter != mm.end()) {
-                    if (iter->second == 1) {
-                        mm.erase(iter);
-                        if (mm.empty()) {
-                            int currLength = i - left + 1;
-                            if (currLength < minLength) {
-                                minLength = currLength;
-                                minLeft = left;
-                            }
-                            mm = this->initMap(t);
-                            while (mm.find(s[left]) == mm.end()) {
-                                left ++;
-                            }
-                        }
-                    } else {
-                        mm.insert(pair<char, int>(iter->first, iter->second - 1));
-                    }
+public:
+    string minWindow(string s, string t) {
+        unordered_map<char, int> need, window;
+        for (auto v: t) need[v]++;
+
+        int valid = 0;
+        int left = 0, right = 0;
+        int len = INT_MAX, start = 0;
+        while (right < s.size()) {
+            // c 是将移入窗口的字符
+            char c = s[right];
+            // 增大窗口
+            right ++;
+
+            // 进行窗口内数据的一系列更新
+            if (need.count(c)) {
+                window[c] ++;
+                if (window[c] == need[c])
+                    valid ++;
+            }
+
+            /*** debug 输出的位置 ***/
+            //printf("window: [%d, %d)\n", left, right);
+
+            // 判断左侧窗口是否要收缩
+            while (valid == need.size()) {
+                if (right - left < len) {
+                    len = right - left;
+                    start = left;
+                }
+
+                // c 是将移出窗口的字符
+                char c = s[left];
+                // 缩小窗口
+                left ++;
+                // 进行窗口内数据的一系列更新
+                if (need.count(c)) {
+                    if (need[c] == window[c]) 
+                        valid --;
+                    window[c] --;
                 }
             }
-
-            return s.substr(minLeft, minLength);
-        }
-
-        map<char, int> initMap(string t) {
-            map<char, int> mm;
-            map<char, int>::iterator iter;
-            for (int i = 0; i < (int)t.length(); ++ i) {
-                iter = mm.find(t[i]);
-                if (iter == mm.end()) {
-                    mm.insert(pair<char, int>(t[i], 1));
-                } else {
-                    mm.insert(pair<char, int>(iter->first, iter->second + 1));
-                }
-            }
-            return mm;
-        }
-
-        string minWindow_v2(string S, string T) {
-            if (T.size() > S.size()) return "";
-            string res = "";
-            int left = 0, count = 0, minLen = S.size() + 1;
-            map<char, int> m;
-            for (int i = 0; i < (int)T.size(); ++i) {
-                if (m.find(T[i]) != m.end()) ++m[T[i]];
-                else m[T[i]] = 1;
-            }
-            for (int right = 0; right < (int)S.size(); ++right) {
-                if (m.find(S[right]) != m.end()) {
-                    --m[S[right]];
-                    if (m[S[right]] >= 0) ++count;
-                    while (count == (int)T.size()) {
-                        if (right - left + 1 < minLen) {
-                            minLen = right - left + 1;
-                            res = S.substr(left, minLen);
-                        }
-                        if (m.find(S[left]) != m.end()) {
-                            ++m[S[left]];
-                            if (m[S[left]] > 0) --count;
-                        }
-                        ++left;
-                    }
-                }
-            }
-            return res;
-        }
-
+        } // end of while
+        return len == INT_MAX? "": s.substr(start, len);
+    }
 };
+
+int main() {
+    Solution *so = new Solution();
+    string res = so->minWindow("ADOBECODEBANC", "ABC");    
+    std::cout << res << std::endl;
+
+    res = so->minWindow("a", "a");
+    std::cout << res << std::endl;
+
+    res = so->minWindow("a", "aa");
+    std::cout << res << std::endl;
+}
