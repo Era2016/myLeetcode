@@ -1,52 +1,68 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
-void print(vector<int>);
+using std::vector;
 class Solution {
 public:
     vector<int> searchRange(vector<int>& nums, int target) {
-        int length = nums.size();
-        int mid, left = 0, right = length - 1; 
-        bool find = false;
+        int left = leftBound(nums, target);
+        int right = rightBound(nums, target);
+        return {left, right};
+    }
+
+    int leftBound(vector<int>& nums, int target) {
+
+        int left = 0, right = nums.size()-1;
         while (left <= right) {
-            mid = left + (right - left) / 2;
-            if (target < nums[mid]) {
-                right = mid - 1; 
-            } else if (target > nums[mid]) {
+            int mid = left + (right - left)/2;
+            if (nums[mid] == target) {
+                right = mid - 1;
+            } else if (nums[mid] < target) {
                 left = mid + 1;
-            } else {
-                find = true;
-                break;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
             }
         }
 
-        if (!find) return {-1, -1};
+        if (left == nums.size()) return -1;
+        return (nums[left] == target)? left: -1;
+    }
 
-        int min = mid, max = mid;
-        while (min > 0 && nums[min-1] == target) 
-            min --;
-        while (max < length-1 && nums[max+1] == target)
-            max ++;
+    int rightBound(vector<int>& nums, int target) {
+        
+        int left = 0, right = nums.size()-1;
+        while (left <= right) {
+            int mid = left + (right - left)/2;
+            if (nums[mid] == target) {
+                left = mid + 1;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            }
+        }
 
-        return {min, max};
+        if (left - 1 < 0) return -1;
+        return (nums[left-1] == target)? left-1: -1;
     }
 };
 
-void print(vector<int> v) {
-    for (vector<int>::iterator it = v.begin(); it != v.end(); it ++)
-        cout << *it << "\t";
-    cout << endl;
-}
-
 int main() {
-    vector<int> v = {5,7,7,8,8,10};
-    //vector<int> v = {5,7,7,8,8,10};
-    //vector<int> v = {};
-    int target = 8;
-   
-    Solution* so = new Solution();
-    vector<int> ret = so->searchRange(v, target);
-    print(ret);
+    Solution *so = new Solution();
+    vector<int> v;
+    auto print = [](vector<int> v) { for(auto i: v) std::cout << i << "\t"; std::cout << std::endl << std::endl; };
+    
+    v = {5,7,7,8,8,10};
+    v = so->searchRange(v, 8);
+    print(v);
+
+
+    v = {5,7,7,8,8,10};
+    v = so->searchRange(v, 6);
+    print(v);
+
+
+    v = {};
+    v = so->searchRange(v, 0);
+    print(v);
 }
