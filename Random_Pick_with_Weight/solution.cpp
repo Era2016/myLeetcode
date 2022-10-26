@@ -36,11 +36,12 @@ class Solution {
 
     int pickIndex() {
         int randMax = presum[presum.size()-1];
-        int randomVal = rand()%randMax+1; // [1, presum[n-1] ]
+        int randomVal = rand()%randMax+1; // [1, presum[n-1] ], not [presum[1/0], presum[n-1] ]
         int bound = leftBound(presum, randomVal)-1;
         //std::cout << "random:" << randomVal<< "; bound:" << bound << std::endl;
         return bound;
     }
+
 };
 
 int main() {
