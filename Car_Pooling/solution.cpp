@@ -10,8 +10,9 @@ private:
 public:
     Difference(vector<int>& v) {
         diff.resize(v.size());
+        diff[0] = v[0];
         for (int i = 1; i < v.size(); i ++) {
-            diff[i] = diff[i-1] + v[i-1];
+            diff[i] = v[i] - v[i-1];
         }
     }
 
