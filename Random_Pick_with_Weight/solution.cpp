@@ -1,3 +1,6 @@
+// 主要利用前缀和，锁定刚好大于前缀和的下标，然后减1即可
+// presum[i] = presum[i-1] + v[i-1]，与左边界无关
+
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -15,7 +18,8 @@ class Solution {
         while (left <= right) {
             int mid = left + (right-left)/2;
             if (v[mid] == target) {
-                right = mid - 1;
+                //right = mid - 1;
+                return mid;
             } else if (v[mid] < target) {
                 left = mid + 1;
             } else if (v[mid] > target) {
