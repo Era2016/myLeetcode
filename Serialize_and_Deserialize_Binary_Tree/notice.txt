@@ -1,0 +1,4 @@
+
+solution.cpp 利用vector暂存string，运行超时
+v2_solution.cpp 直接用string作为参数递归(序列化、反序列化)
+v3_solution.cpp 通过list结构暂存string，递归
