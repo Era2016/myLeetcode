@@ -1,4 +1,8 @@
 
-solution.cpp 利用vector暂存string，运行超时
+solution.cpp 利用vector暂存int，需要将字符串和数字相互转化，比v2耗时高，但内存消耗小
 v2_solution.cpp 直接用string作为参数递归(序列化、反序列化)
 v3_solution.cpp 通过list结构暂存string，递归
+
+v2/v3差别在于反序列化过程中，对string截取的处理：
+v2是递归过程中，通过字符串运算(查找、截取)，重建二叉树，递归过程中没有依赖容器(需要反复遍历字符串)
+v3是通过遍历一次字符串，定位到分隔符，暂存到容器中，后续递归操作利用已分割好的数据进行重建

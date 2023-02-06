@@ -1,15 +1,19 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+#include <iostream>
+#include <list>
+#include <string>
+#include <type_traits>
+#include <vector>
+
+#include "../utils/binaryTree.h"
+
+using std::string;
+using std::to_string;
+using std::list;
+using std::vector;
+
 class Codec {
 public:
-    void rserialize(TreeNode*root,string&str){
+    void rserialize(TreeNode* root, string& str){
         if(root==nullptr)
         {
             str+="None,";
@@ -44,6 +48,7 @@ public:
        string str;
        for(auto& ch:data)
        {
+           //std::cout << "===>" << ch << "<===" << std::endl; 
            if(ch == ','){
                dataArray.push_back(str);
                str.clear();
@@ -67,3 +72,34 @@ public:
 // Your Codec object will be instantiated and called as such:
 // Codec ser, deser;
 // TreeNode* ans = deser.deserialize(ser.serialize(root));
+int main() {
+    Codec *c = new Codec();
+    vector<string> v;
+    TreeNode *root;
+    string str;
+
+    v = {"1","2","3","null","null","4","5"}; 
+    root = buildBinaryTree(v); 
+    str = c->serialize(root);
+    std::cout << str << std::endl;
+    root = c->deserialize(str);
+    //root = c->deserialize(c->serialize(root));
+    bfs(root);
+
+    return 0;
+    std::cout << std::endl << std::endl;
+
+    v = {};
+    root = buildBinaryTree(v); 
+    str = c->serialize(root);
+    std::cout << str << std::endl;
+    root = c->deserialize(str);
+    //root = c->deserialize(c->serialize(root));
+    bfs(root);
+
+
+    v = {"-1000", "null", "-1000"};
+    root = buildBinaryTree(v);
+    root = c->deserialize(c->serialize(root));
+    bfs(root);
+}

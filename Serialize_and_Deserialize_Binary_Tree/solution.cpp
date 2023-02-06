@@ -66,12 +66,25 @@ public:
          
         data += sp;
         vector<int> vv;
-        for (int i = 0; i < data.length(); i ++) {
+        /*for (int i = 0; i < data.length(); i ++) {
             int pos = data.find(sp, i);
             if (pos != -1) {
                 vv.push_back(stoi(data.substr(i, i-pos)));
                 i = pos; // i = pos + ",".length() - 1;
             }
+        }*/
+        string tmpStr;
+        for (auto& ch: data) {
+            if (ch == ',') {
+                vv.push_back(stoi(tmpStr));
+                tmpStr.clear();
+            } else {
+                tmpStr.push_back(ch);
+            }
+        }
+        if (!tmpStr.empty()) {
+            vv.push_back(stoi(tmpStr));
+            tmpStr.clear();
         }
         TreeNode* root = dfs_deserialize(vv);
         return root;
