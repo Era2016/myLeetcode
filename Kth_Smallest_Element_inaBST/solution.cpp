@@ -15,20 +15,31 @@ struct TreeNode {
 class Solution {
 public:
     int kthSmallest(TreeNode* root, int k) {
-    	vector<int> v;    
-		//inOrder(root, v);
-        inOrderWithoutRecursive(root, v);
+        this->k = k;
+        this->cnt = 0;
+
+        int ret = 0;
+		inOrder(root, &ret);
+        return ret;
+    	//vector<int> v;    
+        //inOrderWithoutRecursive(root, v);
 		//print(v);	
-        return v[k-1];
+        //return v[k-1];
     }
 
 private:
-	void inOrder(TreeNode* root, vector<int>& v) {
+    int k, cnt;
+	void inOrder(TreeNode* root, int* ret) {
 		if (root != nullptr) {
-			inOrder(root->left, v);
-			v.push_back(root->val);
-			inOrder(root->right, v);	
-		}		
+			inOrder(root->left, ret);
+            cnt ++;
+            if (cnt == k) {
+                *ret = root->val;
+                //std::cout << "root: " << root->val<< "; cnt: " << cnt << std::endl;
+                return;
+            }
+			inOrder(root->right, ret);	
+		}
 	}
 
     void inOrderWithoutRecursive(TreeNode* root, vector<int>& v) {

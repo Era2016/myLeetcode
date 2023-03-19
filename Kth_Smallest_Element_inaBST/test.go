@@ -9,7 +9,8 @@ func Add2Slice(s []int, t int) {
 }
 
 func Add2Slice2(s *[]int, t int) {
-	//*s[0]++  /* 报错！ */
+	//*s[0]++ /* 报错！ */
+	(*s)[0]++
 	*s = append(*s, t)
 	//s[0]++
 }
