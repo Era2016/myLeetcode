@@ -1,88 +1,77 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
 
 using std::vector;
-using std::unordered_map;
-using std::cout;
-using std::endl;
+
 class Solution {
 private:
-    vector<int> ret;
-    vector<int> tmp;
     vector<int> index;
+    vector<int> result;
+    vector<int> tmp;
     vector<int> tmpIndex;
+private:
     void mergeSort(vector<int>& nums, int left, int right) {
-        if (left >= right) {
-            return;
+        if (left < right) {
+            int mid = left + (right-left)/2;
+            mergeSort(nums, left, mid);
+            mergeSort(nums, mid+1, right);
+            merge(nums, left, mid, right);
         }
-
-        int mid = left + (right - left)/2;
-        mergeSort(nums, left, mid);
-        mergeSort(nums, mid+1, right); 
-        
-        merge(nums, left, mid, right);
-        return;
     }
 
     void merge(vector<int>& nums, int left, int mid, int right) {
-        int i = left;
-        int j = mid+1;
-        int ii = 0;
-        
+        int i = left, j = mid + 1;
+        int p = left;
         while (i <= mid && j <= right) {
             if (nums[i] <= nums[j]) {
-                tmp[ii] = nums[i];
-                tmpIndex[ii] = index[i];
-                ret[index[i] ] += j - mid - 1;
-                ii ++, i ++;
+                tmp[p] = nums[i];
+                tmpIndex[p] = index[i];
+                result[index[i] ] += j - mid - 1; 
+                p ++, i ++;
             } else {
-                tmp[ii] = nums[j];
-                tmpIndex[ii] = index[j];
-                ii ++, j ++;
+                tmp[p] = nums[j];
+                tmpIndex[p] = index[j];
+                p ++, j ++;
             }
         }
 
         while (i <= mid) {
-            tmp[ii] = nums[i];
-            tmpIndex[ii] = index[i];
-            ret[index[i] ] += j - mid - 1;
-            ii ++, i ++;
+            tmp[p] = nums[i];
+            tmpIndex[p] = index[i];
+            result[index[i] ] += j - mid - 1;
+            p ++, i ++;
         }
 
         while (j <= right) {
-            tmp[ii] = nums[j];
-            tmpIndex[ii] = index[j];
-            ii ++, j ++;
+            tmp[p] = nums[j];
+            tmpIndex[p] = index[j];
+            p ++, j ++;
         }
-        
-        for (int p=left, k=0; p <= right; p++, k++) {
-            nums[p] = tmp[k];
-            index[p] = tmpIndex[k];
-        }
-        return;
-    }
 
+        for (int i = left; i <= right; i ++) {
+            nums[i] = tmp[i];
+            index[i] = tmpIndex[i];
+        }
+    }
 public:
     vector<int> countSmaller(vector<int>& nums) {
-        int numsSize = nums.size();
-        ret.resize(numsSize);
-        tmp.resize(numsSize);
-        index.resize(numsSize);
-        tmpIndex.resize(numsSize);
-        for (int i = 0; i < nums.size(); i ++) {
+        int length = nums.size();
+        this->index.resize(length);
+        this->tmp.resize(length);
+        this->tmpIndex.resize(length);
+        this->result.resize(length);
+        for (int i = 0; i < length; i ++) {
             index[i] = i;
         }
 
-        mergeSort(nums, 0, nums.size()-1);
-        return ret;
+        mergeSort(nums, 0, length-1);
+        return this->result;
     }
-    
     void clear() {
-        ret.clear();
-        tmp.clear();
-        index.clear();
-        tmpIndex.clear();
+        this->index.clear();
+        this->tmp.clear();
+        this->tmpIndex.clear();
+        this->result.clear();
     }
 };
 
@@ -97,20 +86,20 @@ int main() {
         std::cout << std::endl;
     };
 
-    //v = {5,2,6,1};
-    //ret = so->countSmaller(v);
-    //print(ret);
-    //so->clear();
+    v = {5,2,6,1};
+    ret = so->countSmaller(v);
+    print(ret);
+    so->clear();
 
-    //v = {-1};
-    //ret = so->countSmaller(v);
-    //print(ret);
-    //so->clear();
+    v = {-1};
+    ret = so->countSmaller(v);
+    print(ret);
+    so->clear();
 
-    //v = {-1,-1};
-    //ret = so->countSmaller(v);
-    //print(ret);
-    //so->clear();
+    v = {-1,-1};
+    ret = so->countSmaller(v);
+    print(ret);
+    so->clear();
 
     v = {26,78,27,100,33,67,90,23,66,5,38,7,35,23,52,22,83,51,98,69,81,32,78,28,94,13,2,97,3,76,99,51,9,21,84,66,65,36,100,41};
     ret = so->countSmaller(v);
