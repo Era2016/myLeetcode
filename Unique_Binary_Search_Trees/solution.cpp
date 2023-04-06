@@ -26,5 +26,6 @@ int main() {
     std::cout << "n=3: " << so->numTrees(3) << std::endl;
     std::cout << "n=5: " << so->numTrees(5) << std::endl;
     std::cout << "n=1: " << so->numTrees(1) << std::endl;
+    std::cout << "n=8: " << so->numTrees(8) << std::endl;
     std::cout << "n=19: " << so->numTrees(19) << std::endl;
 }
