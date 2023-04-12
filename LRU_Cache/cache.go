@@ -1,161 +1,119 @@
 package main
 
 import "fmt"
-import "sync"
-
-// doublely link list
-type linkList struct {
-	key, val   int64
-	prev, next *linkList
-}
 
 type LRUCache struct {
-	capacity, count int64
-	hmap            map[int64]*linkList
-	head, tail      *linkList
-	sync.RWMutex
+	size       int
+	capacity   int
+	cache      map[int]*DLinkedNode
+	head, tail *DLinkedNode
 }
 
-func cacheInit(capacity int64) *LRUCache {
-	cache := &LRUCache{
-		hmap:     make(map[int64]*linkList),
+type DLinkedNode struct {
+	key, value int
+	prev, next *DLinkedNode
+}
+
+func initDLinkedNode(key, value int) *DLinkedNode {
+	return &DLinkedNode{
+		key:   key,
+		value: value,
+	}
+}
+
+func Constructor(capacity int) LRUCache {
+	l := LRUCache{
+		cache:    map[int]*DLinkedNode{},
+		head:     initDLinkedNode(0, 0),
+		tail:     initDLinkedNode(0, 0),
 		capacity: capacity,
 	}
-	return cache
+	l.head.next = l.tail
+	l.tail.prev = l.head
+	return l
 }
 
-func (cache *LRUCache) get(key int64) (val int64) {
-	// O(1) get value
-	var node *linkList
-	cache.RLock()
-	if _, ok := cache.hmap[key]; ok {
-		node = cache.hmap[key]
-		val = node.val
-		cache.RUnlock()
-	} else {
-		val = -1
-		cache.RUnlock()
-		return
+func (this *LRUCache) Get(key int) int {
+	if _, ok := this.cache[key]; !ok {
+		return -1
 	}
-
-	// sort link list
-	cache.Lock()
-	if node == cache.head {
-		goto FIN
-	} else {
-		// delete node
-		if node.next == nil { // tail node
-			node.prev.next = nil
-			cache.tail = node.prev
-			node.prev = nil
-		} else { // normal node
-			node.prev.next = node.next
-			node.next.prev = node.prev
-			node.next, node.prev = nil, nil
-		}
-
-		// insert node
-		node.next = cache.head
-		cache.head.prev = node
-		cache.head = node
-	}
-
-FIN:
-	cache.Unlock()
-
-	return
+	node := this.cache[key]
+	this.moveToHead(node)
+	return node.value
 }
 
-func (cache *LRUCache) put(key, value int64) {
-	var isUpdate bool
-	var node *linkList
-	cache.RLock()
-	if v, ok := cache.hmap[key]; ok {
-		isUpdate = true
-		node = v
-	} else {
-		node = &linkList{key: key, val: value}
-	}
-	cache.RUnlock()
-
-	cache.Lock()
-	if isUpdate {
-		// delete node
-		if node.next == nil { // tail node
-			node.prev.next = nil
-			cache.tail = node.prev
-			node.prev = nil
-		} else { // normal node
-			node.prev.next = node.next
-			node.next.prev = node.prev
-			node.next, node.prev = nil, nil
+func (this *LRUCache) Put(key int, value int) {
+	if _, ok := this.cache[key]; !ok {
+		node := initDLinkedNode(key, value)
+		this.cache[key] = node
+		this.addToHead(node)
+		this.size++
+		if this.size > this.capacity {
+			removed := this.removeTail()
+			delete(this.cache, removed.key)
+			this.size--
 		}
-		// update (key value) pair
-		node.val = value
-	}
-
-	// insert node
-	if cache.head == nil {
-		cache.head = node
-		cache.tail = node
 	} else {
-		node.next = cache.head
-		cache.head.prev = node
-		cache.head = node
+		node := this.cache[key]
+		node.value = value
+		this.moveToHead(node)
 	}
-
-	// update hash map
-	cache.hmap[key] = node
-
-	// capacity check
-	if !isUpdate {
-		cache.count++
-		if cache.count > cache.capacity {
-			cache.tail.prev.next = nil
-			tmp := cache.tail
-			cache.tail = cache.tail.prev
-			tmp.prev = nil
-
-			delete(cache.hmap, tmp.key)
-			cache.count--
-		}
-	}
-
-	cache.Unlock()
-	return
 }
 
-func (cache *LRUCache) print() {
-	fmt.Printf("count: %d\n", cache.count)
-	for k, v := range cache.hmap {
-		fmt.Printf("key: %d, value: %d\n", k, v.val)
+func (this *LRUCache) addToHead(node *DLinkedNode) {
+	node.prev = this.head
+	node.next = this.head.next
+	this.head.next.prev = node
+	this.head.next = node
+}
+
+func (this *LRUCache) removeNode(node *DLinkedNode) {
+	node.prev.next = node.next
+	node.next.prev = node.prev
+}
+
+func (this *LRUCache) moveToHead(node *DLinkedNode) {
+	this.removeNode(node)
+	this.addToHead(node)
+}
+
+func (this *LRUCache) removeTail() *DLinkedNode {
+	node := this.tail.prev
+	this.removeNode(node)
+	return node
+}
+
+func (c *LRUCache) print() {
+	fmt.Printf("count: %d\n", c.size)
+	for k, v := range c.cache {
+		fmt.Printf("key: %d, value: %d\n", k, v.value)
 	}
 	fmt.Println()
 }
 
-func (cache *LRUCache) printSequential() {
-	fmt.Printf("count: %d\n", cache.count)
-	for p := cache.head; p != nil; p = p.next {
-		fmt.Printf("key: %d, value: %d\n", p.key, p.val)
+func (c *LRUCache) printSequential() {
+	fmt.Printf("count: %d\n", c.size)
+	for p := c.head.next; p != c.tail; p = p.next {
+		fmt.Printf("key: %d, value: %d\n", p.key, p.value)
 	}
 	fmt.Println()
 }
 
 func main() {
 
-	var cache *LRUCache = cacheInit(int64(10))
+	var cache LRUCache = Constructor(int(10))
 	for i := 1; i <= 20; i++ {
-		cache.put(int64(i), int64(i+100))
+		cache.Put(int(i), int(i+100))
 	}
 	cache.printSequential()
-	//cache.print()
+	cache.print()
 
-	cache.put(int64(8), int64(88888))
+	cache.Put(int(8), int(88888))
 	cache.printSequential()
 	//cache.print()
 
-	cache.get(int64(1))
-	cache.get(int64(12))
+	cache.Get(int(1))
+	cache.Get(int(12))
 	cache.printSequential()
 
 	fmt.Println("hello world")
