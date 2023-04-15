@@ -2,15 +2,19 @@
     "tasks": [
         {
             "type": "cppbuild",
+            //"type": "shell",
             "label": "C/C++: clang++ build active file",
             "command": "/usr/bin/clang++",
             "args": [
+                "-std=c++11",
+                "-stdlib=libc++",
                 "-fcolor-diagnostics",
                 "-fansi-escape-codes",
                 "-g",
+                "-fsanitize=address",
                 "${file}",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${fileDirname}/test"
             ],
             "options": {
                 "cwd": "${fileDirname}"
