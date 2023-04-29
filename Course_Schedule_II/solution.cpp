@@ -7,53 +7,47 @@ using std::list;
 class Solution {
 private:
     bool hasCycle = false;
-    vector<bool> visited;
-    vector<bool> onPath;
+    vector<int> visit;
     list<int> postOrder;
     vector<vector<int>> buildGraph(int numCourses, vector<vector<int>>& prerequisites) {
-
         vector<vector<int>> graph(numCourses, vector<int>());
-        for (const auto& edge: prerequisites) {
-            graph[edge[1]].emplace_back(edge[0]);
+        for (const auto& info: prerequisites) {
+            graph[info[1]].push_back(info[0]);
         }
         return graph;
     }
-
-    void traverse(vector<vector<int>>& graph, int s) {
-        if (onPath[s]) {
-            hasCycle = true;
+    void dfs(vector<vector<int>>& graph, int s) {
+        visit[s] = 1;
+        for (int v: graph[s]) {
+            if (visit[v] == 0) {
+                dfs(graph, v);
+                if (hasCycle) return;
+            } else if (visit[v] == 1) {
+                hasCycle = true;
+                return;
+            }
         }
-        if (visited[s] || hasCycle) {
-            return;
-        }
-        onPath[s] = true;
-        visited[s] = true;
-
-        for (int t: graph[s]) {
-            traverse(graph, t);
-        }
-        postOrder.emplace_back(s);
-        onPath[s] = false;
+        visit[s] = 2;
+        postOrder.push_back(s);
     }
 public:
     vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
         vector<vector<int>> graph = buildGraph(numCourses, prerequisites);
 
-        visited.clear(); visited.resize(numCourses);
-        onPath.clear(); onPath.resize(numCourses);
+        visit.clear(); visit.resize(numCourses);
         postOrder.clear();
 
-        for (int i = 0; i < numCourses; i ++) {
-            traverse(graph, i);
+        for (int i = 0; i < numCourses && !hasCycle; i ++) {
+            if (visit[i] == 0) {
+                dfs(graph, i);
+            }
         }
 
-        if (hasCycle) {
-            return {};
-        }
+        if (hasCycle) return {};
+
         postOrder.reverse();
-        
         return vector<int>(postOrder.begin(), postOrder.end());
-    }    
+    }
 };
 
 void print(vector<int>& v) {
