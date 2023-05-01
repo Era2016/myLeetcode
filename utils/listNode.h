@@ -5,6 +5,7 @@ struct ListNode {
     ListNode *next;
     ListNode() : val(-1), next(NULL) {}
     ListNode(int x) : val(x), next(NULL) {}
+    ListNode(int _val, ListNode *_next): val(_val), next(_next) {}
     ListNode(const ListNode& l) : val(l.val), next(l.next) {}
 };
 

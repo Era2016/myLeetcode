@@ -1,96 +1,57 @@
 #include <iostream>
+#include "../utils/listNode.h"
 
-using namespace std;
-
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
-struct ListNode {
-    int val;
-    ListNode *next;
-    //ListNode(int x) : val(x), next(NULL) {}
-};
-
+using std::cout;
+using std::endl;
 class Solution {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
-    
-        if (n <= 0) {
-            return NULL;
+        ListNode *dummy = new ListNode(-1, head);
+        ListNode *first = head, *second = dummy;
+        int cnt = 1;
+        while (first != nullptr && cnt <= n) {
+            first = first->next;
+            cnt ++;
         }
 
-        ListNode *ptr_1, *ptr_2;
-        ptr_1 = ptr_2 = head;
-        int i = 0;
-        for (; i < n && ptr_1 != NULL; i ++) {
-            ptr_1 = ptr_1 -> next;
+        while (first != nullptr) {
+            first = first->next;
+            second = second->next;
         }
-        // n is too big
-        if (i < n) {
-            return NULL;
-        }
-
-        if (ptr_1 == NULL) {
-            ListNode *pNode = head;
-            head = head -> next;
-            delete(pNode);
-            return head;
-        }
-
-        while (ptr_1 -> next != NULL) {
-            ptr_1 = ptr_1 -> next;
-            ptr_2 = ptr_2 -> next;
-        }
-
-        ListNode* pNode = ptr_2 -> next;
-        ptr_2 -> next = pNode -> next;
-        delete(pNode);
         
-        return head;
-    }
-
-    ListNode* initList(int n) {
-        if (n <= 0) {
-            return NULL;
-        }
-
-        ListNode *ptr = new ListNode();
-        ListNode *pHead = ptr;
-        ptr->val = 1;
-        ptr->next = NULL;
-        for (int i = 2; i <= n; i ++) {
-            ListNode* node = new ListNode();
-            node->val = i;
-            node->next = NULL;
-
-            ptr->next = node;
-            ptr = ptr->next;
-        }
-
-        return pHead;
-    }
-
-    void print(ListNode* head) {
-        for (ListNode* p = head; p != NULL; p = p->next) {
-            cout << p->val << "\t";
-        }
-        cout << endl;
+        ListNode *toDelete = second->next;
+        second->next = second->next->next;
+        delete(toDelete);
+        return dummy->next;
     }
 };
 
-int main()
-{
+ListNode* initList(int n) {
+    ListNode *dummy = new ListNode(-1);
+    ListNode *ptr = dummy;
+    for (int i = 0; i < n; i ++) {
+        ListNode *node = new ListNode(i+1);
+        ptr->next = node;
+        ptr = node;
+    }
+    return dummy->next;
+}
+
+void print(ListNode* head) {
+    for (ListNode* p = head; p != NULL; p = p->next) {
+        cout << p->val << "\t";
+    }
+    cout << endl;
+}
+
+int main() {
+
     Solution* solution = new Solution();
-    ListNode* pHead = solution->initList(2);
-    solution->print(pHead); 
+    ListNode* pHead = initList(2);
+    print(pHead); 
 
     ListNode* ptr = solution->removeNthFromEnd(pHead, 2);
     //cout << ptr->val << endl;
-    solution->print(ptr);
+    print(ptr);
     return 0;
 }
