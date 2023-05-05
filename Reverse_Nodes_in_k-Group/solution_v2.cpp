@@ -6,37 +6,29 @@ using std::vector;
 using std::pair;
 class Solution {
 private:
-    pair<ListNode*, ListNode*> reverseBetween(ListNode* head, ListNode* tail) {
+    // 左闭右开
+     ListNode* reverseBetween(ListNode* head, ListNode* tail) {
         ListNode *pre = nullptr, *cur = head;
-        while (pre != tail) {
+        while (cur != tail) {
             ListNode *next = cur->next;
             cur->next = pre;
             pre = cur;
             cur = next;
        }
-        return {tail, head};
+        return pre; 
     }
+
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
-        ListNode *dummy = new ListNode(-1, head);
-        ListNode *ptr = head, *pre = dummy;
-        while (ptr != nullptr) {
-            ListNode *tail = ptr;
-            for (int cnt = 1; cnt < k; cnt ++) {
-                tail = tail->next;
-                if (tail == nullptr) return dummy->next;
-            }
-
-            ListNode *next = tail->next;
-
-            auto nodes = reverseBetween(ptr, tail);
-            pre->next = nodes.first;
-            nodes.second->next = next;
-
-            pre = nodes.second;
-            ptr = next;
+        ListNode *ptr = head;
+        for (int cnt = 1; cnt <= k; cnt ++) {
+            if (ptr == nullptr) return head;
+            ptr = ptr->next;
         }
-        return dummy->next;
+        
+        ListNode *newHead = reverseBetween(head, ptr);
+        head->next = reverseKGroup(ptr, k);
+        return newHead;
     }
 };
 
