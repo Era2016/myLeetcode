@@ -6,6 +6,7 @@ using namespace std;
 void print(vector<vector<int>>& vv);
 class Solution {
 public:
+    // 顺时针旋转
     void rotate(vector<vector<int>>& matrix) {
         int count = matrix.size();
         for (int i = 0; i < count; i ++) {
@@ -21,6 +22,22 @@ public:
             }
         }
         //print(matrix);
+    }
+
+    // 逆时针旋转
+    void rotate2(vector<vector<int>>& matrix) {
+        int count = matrix.size();
+        for (int i = 0; i < count; i ++) {
+            for (int j = 0; j < count - i; j ++) {
+                std::swap(matrix[i][j], matrix[count-j-1][count-i-1]);
+            }
+        }
+
+        for (int i = 0; i < count; i ++) {
+            for (int j = 0; j < count/2; j ++) {
+                std::swap(matrix[i][j], matrix[i][count-j-1]);
+            }
+        }
     }
 };
 
