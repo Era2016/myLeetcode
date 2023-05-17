@@ -1,78 +1,59 @@
 #include <iostream>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
+#include <cmath>
+#include <unordered_set>
 
-using std::unordered_map;
-using std::unordered_set;
 using std::vector;
 using std::string;
+using std::unordered_set;
 class Solution {
 public:
     vector<string> findRepeatedDnaSequences(string s) {
-        vector<int> nums = transform(s);
-        //auto print = [] (vector<int> v) { for (auto str: v) std::cout << str;  std::cout << std::endl; };
-        //print (nums);
+        vector<int> nums(s.length(), 0);
+        int cnt = 0;
+        for (const auto& c: s) {
+            if (c == 'A') nums[cnt ++] = 0;
+            if (c == 'G') nums[cnt ++] = 1;
+            if (c == 'C') nums[cnt ++] = 2;
+            if (c == 'T') nums[cnt ++] = 3;
+        }
+        
+        int L = 10;
+        int R = 4;
+        int RL = pow(R, L-1); 
+        int windowHash = 0;
 
-        unordered_map<int, int> window;
-        unordered_set<string> filter;
-        vector<string> res;
-
+        unordered_set<string> ret;
+        unordered_set<int> seen;
         int left = 0, right = 0;
-        int L = 10; // 数字位数
-        int R = 4; // 进制
-        int RL = pow(R, L-1); // 存储 R^(L - 1) 的结果
-
-        int hash = 0;
-
-        while (right < nums.size()) {
-            hash = hash*R + nums[right ++]; 
-
+        while (right < s.length()) {
+            windowHash = R * windowHash + nums[right ++];
             if (right - left == L) {
-                if (window.count(hash)) {
-                    filter.insert(s.substr(left, right-left));
-                    //std::cout << s.substr(left, right-left) << std::endl;
+                if (seen.count(windowHash)) {
+                    ret.insert(s.substr(left, right-left));
                 } else {
-                    window[hash] ++;
+                    seen.insert(windowHash);
                 }
 
-                hash = hash - RL*nums[left ++];
+                windowHash = windowHash - nums[left ++]*RL;
             }
         }
-        for (auto k: filter) res.push_back(k);
-        return res;
-    }
-
-    vector<int> transform(string s) {
-        vector<int> v(s.size());
-        for (int i = 0; i < s.size(); i ++) {
-            switch (s[i]) {
-                case 'A':
-                    v[i] = 0;
-                    break;
-                case 'C':
-                    v[i] = 1;
-                    break;
-                case 'G':
-                    v[i] = 2;
-                    break;
-                case 'T':
-                    v[i] = 3;
-                    break;
-            }
-        } 
-        return v;
+        return vector<string>(ret.begin(), ret.end());
     }
 };
 
 int main() {
-    Solution* so = new Solution();
-    vector<string> v;
+    Solution *so = new Solution();
+    vector<string> res;
+    auto print = [] (vector<string> v) { 
+        for (auto str: v) 
+            std::cout << str << "\t";  
+        std::cout << std::endl; 
+    };
 
-    auto print = [] (vector<string> v) { for (auto str: v) std::cout << str << std::endl; std::cout << std::endl; };
-    v = so->findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT");
-    print(v);
+    res = so->findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT");
+    print(res);
 
-    v = so->findRepeatedDnaSequences("AAAAAAAAAAAAA");
-    print(v);
+    res = so->findRepeatedDnaSequences("AAAAAAAAAAAAA");
+    print(res);
 }
