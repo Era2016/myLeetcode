@@ -40,6 +40,7 @@ class Solution {
 
     int pickIndex() {
         int randMax = presum[presum.size()-1];
+        // srand(time(nullptr)); // 使用伪随机，才能模拟概率 
         int randomVal = rand()%randMax+1; // [1, presum[n-1] ], not [presum[1/0], presum[n-1] ]
         int bound = leftBound(presum, randomVal)-1;
         //std::cout << "random:" << randomVal<< "; bound:" << bound << std::endl;

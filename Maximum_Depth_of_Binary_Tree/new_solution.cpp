@@ -2,7 +2,7 @@
 #include <vector>
 #include <cassert>
 
-#include "../binaryTree.h"
+#include "../utils/binaryTree.h"
 
 class Solution {
 public:
