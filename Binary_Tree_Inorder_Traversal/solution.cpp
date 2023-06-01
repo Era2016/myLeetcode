@@ -17,8 +17,6 @@ class Solution {
     }
 
     void inOrder(vector<int>& v, TreeNode* root) {
-        if (root == nullptr) return;
-
         stack<TreeNode*> s;
         while (!s.empty() || root != nullptr) {
             while (root != nullptr) {

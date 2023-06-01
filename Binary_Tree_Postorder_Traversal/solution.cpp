@@ -1,13 +1,15 @@
 #include <iostream>
+#include <deque>
 #include <vector>
-#include <stack>
 
 #include "../utils/binaryTree.h"
 
 using std::vector;
-using std::stack;
+using std::deque;
 using std::string;
+
 class Solution {
+private:
     void postOrderRecursively(vector<int>& v, TreeNode* root) {
         if (root != nullptr) {
             postOrderRecursively(v, root->left);
@@ -15,32 +17,31 @@ class Solution {
             v.push_back(root->val);
         }
     }
-
     void postOrder(vector<int>& v, TreeNode* root) {
-        stack<TreeNode*> s;
+        deque<TreeNode*> stack;
         TreeNode* prev = nullptr;
-        while (!s.empty() || root != nullptr) {
+        while (!stack.empty() || root != nullptr) {
             while (root != nullptr) {
-                s.push(root);
+                stack.push_front(root);
                 root = root->left;
             }
 
-            root = s.top(); s.pop();
+            root = stack.front(); stack.pop_front();
             if (root->right == nullptr || root->right == prev) {
                 v.push_back(root->val);
-                
                 prev = root;
+
                 root = nullptr;
             } else {
-                s.push(root);
+                stack.push_front(root);
                 root = root->right;
             }
         }
     }
+
 public:
     vector<int> postorderTraversal(TreeNode* root) {
         vector<int> v;
-        //postOrderRecursively(v, root);
         postOrder(v, root);
         return v;
     }
