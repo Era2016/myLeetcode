@@ -1,5 +1,4 @@
 #include <vector>
-
 #include "../utils/binaryTree.h"
 
 using std::vector;
