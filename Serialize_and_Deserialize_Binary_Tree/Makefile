@@ -1,4 +1,4 @@
-objects = ../utils/binaryTree.o v2_solution.o
+objects = ../utils/binaryTree.o solution.o
 CC = clang++
 CFLAGS = -std=c++11 -g -fsanitize=address
 
@@ -8,8 +8,8 @@ edit: $(objects)
 test: $(objects)
 	$(CC) $(CFLAGS) -o test $(objects) 
 
-solution.o: v2_solution.cpp
-	$(CC) $(CFLAGS) -c v2_solution.cpp
+solution.o: solution.cpp
+	$(CC) $(CFLAGS) -c solution.cpp
 
 .phony: clean
 clean:

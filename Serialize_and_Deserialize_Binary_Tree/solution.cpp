@@ -1,124 +1,83 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
-#include <string>
-#include "../utils/binaryTree.h"
+#include <deque>
 
+#include "../utils/binaryTree.h"
+using std::istringstream;
 using std::string;
 using std::vector;
-using std::to_string;
-
-const int flag = -1001;
-const string sp = ",";
-
+using std::deque;
 class Codec {
 private:
-    void dfs_serialize(TreeNode *root, vector<int>& v) {
-        if (!root) {
-            v.push_back(flag);
-            return ;
+    string serialization;
+    void firstTravel(TreeNode* root) {
+        if (root != nullptr) {
+            serialization += std::to_string(root->val) + ',';
+            firstTravel(root->left);
+            firstTravel(root->right);
+        } else {
+            serialization += "null,";
         }
-
-        v.push_back(root->val);
-        dfs_serialize(root->left, v);
-        dfs_serialize(root->right, v);
     }
-
-    TreeNode* dfs_deserialize(vector<int>& v) {
-
-        int val = *(v.begin());
-        v.erase(v.begin());
-
-        if (val == flag) {
+ 
+    TreeNode* build(deque<string>& tokens) {
+        if (tokens.empty()) return nullptr;
+        deque<string>::iterator it = tokens.begin();
+        if (*it == "null") {
+            tokens.erase(it);
             return nullptr;
         }
-
-        TreeNode *root = new TreeNode(val);
-        root->left = dfs_deserialize(v);
-        root->right = dfs_deserialize(v);
+        TreeNode* root = new TreeNode(std::stoi(*it));
+        tokens.erase(it);
+        root->left = build(tokens);
+        root->right = build(tokens);
         return root;
-    }
-
-    void print(vector<int> v) {
-        for (auto val: v) {
-            std::cout << val << "\t";
-        }
-
-        std::cout << std::endl;
     }
 public:
 
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
-        vector<int> v;
-        dfs_serialize(root, v);
-        //print(v);
-        string str;
-        for (auto i: v ){
-            str += to_string(i) + sp;
-        }
-        str = str.substr(0, str.length()-1);
-        //std::cout << str << std::endl;
-        return str;
+        this->serialization = "";
+        this->firstTravel(root);
+        return serialization.erase(serialization.size()-1, 1);
     }
 
     // Decodes your encoded data to tree.
     TreeNode* deserialize(string data) {
-         
-        data += sp;
-        vector<int> vv;
-        /*for (int i = 0; i < data.length(); i ++) {
-            int pos = data.find(sp, i);
-            if (pos != -1) {
-                vv.push_back(stoi(data.substr(i, i-pos)));
-                i = pos; // i = pos + ",".length() - 1;
-            }
-        }*/
-        string tmpStr;
-        for (auto& ch: data) {
-            if (ch == ',') {
-                vv.push_back(stoi(tmpStr));
-                tmpStr.clear();
-            } else {
-                tmpStr.push_back(ch);
-            }
+        istringstream iss(data);
+        string token;
+        char delimiter = ',';
+        deque<string> tokens;
+        while (getline(iss, token, delimiter)) {
+            tokens.push_back(token);
         }
-        if (!tmpStr.empty()) {
-            vv.push_back(stoi(tmpStr));
-            tmpStr.clear();
-        }
-        TreeNode* root = dfs_deserialize(vv);
-        return root;
+
+        return build(tokens);
     }
 };
 
 int main() {
-    Codec *c = new Codec();
+    Codec* cc = new Codec();
     vector<string> v;
-    TreeNode *root;
+    TreeNode* root;
     string str;
-
-    v = {"1","2","3","null","null","4","5"}; 
-    root = buildBinaryTree(v); 
-    //str = c->serialize(root);
-    //std::cout << str << std::endl;
-    //root = c->deserialize(str);
-    root = c->deserialize(c->serialize(root));
-    bfs(root);
-
-    std::cout << std::endl << std::endl;
-
-    v = {};
-    root = buildBinaryTree(v); 
-    //str = c->serialize(root);
-    //std::cout << str << std::endl;
-    //root = c->deserialize(str);
-    root = c->deserialize(c->serialize(root));
-    bfs(root);
-
-
-    v = {"-1000", "null", "-1000"};
+    
+    // normal
+    v = {"1","2","3","null","null","4","5"};
     root = buildBinaryTree(v);
-    root = c->deserialize(c->serialize(root));
+    str = cc->serialize(root);
+    std::cout << str << std::endl;
+
+    root = cc->deserialize(str);
+    bfs(root);
+
+    // speciall
+    v = {};
+    root = buildBinaryTree(v);
+    str = cc->serialize(root);
+    std::cout << str << std::endl;
+
+    root = cc->deserialize(str);
     bfs(root);
 }
-
