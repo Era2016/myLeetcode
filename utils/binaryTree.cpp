@@ -49,9 +49,8 @@ TreeNode* buildBinaryTree(vector<string>& v) {
 void bfs(TreeNode* root) {
     if (root == nullptr) return;
 
-    TreeNode* pRoot = root;
     int depth = 1;
-
+    TreeNode* pRoot = root;
     queue<TreeNode*> q;
     q.push(pRoot);
 
@@ -59,23 +58,16 @@ void bfs(TreeNode* root) {
         int size = q.size();
         for (int i = 0; i < size; i ++) {
             TreeNode* ptr = q.front();
-
             if (i == 0) cout << "the depth: "<< depth << "-> ";
             cout << ptr->val << "\t";
 
             q.pop();
-
-            if (ptr->left != nullptr) {
-                q.push(ptr->left);
-            }
-
-            if (ptr->right != nullptr) {
-                q.push(ptr->right);
-            }
+            if (ptr->left != nullptr) { q.push(ptr->left); }
+            if (ptr->right != nullptr) { q.push(ptr->right); }
         }
 
         depth ++;
         cout << endl;
     }
-
+    cout << endl;
 }
