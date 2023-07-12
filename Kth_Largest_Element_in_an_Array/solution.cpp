@@ -58,7 +58,7 @@ public:
         return *mset.begin();
     }
 
-    // binary + quick.partation
+    // binary + quick.partition
     int findKthLargest5(vector<int>& nums, int k) {
         int start = 0;
         int end = (int) nums.size() - 1;
@@ -66,7 +66,7 @@ public:
         k = (int) nums.size() - k;
         random_shuffle(nums.begin(), nums.end());
         while (start <= end) {
-            index = partation(nums, start, end);
+            index = partition(nums, start, end);
             if (index == k) {
                 break;
             } else if (index < k) {
@@ -78,7 +78,7 @@ public:
         return nums[index];
     }
 
-    int partation(vector<int>& v, int start, int end) {
+    int partition(vector<int>& v, int start, int end) {
         int index = start - 1;
         for (int i = start; i < end; i ++) {
             if (v[i] < v[end]) {
@@ -95,7 +95,7 @@ public:
     
     void quickSort(vector<int>& v, int start, int end) {
         if (start < end) {
-            int index = partation(v, start, end);
+            int index = partition(v, start, end);
             quickSort(v, start, index-1);
             quickSort(v, index+1, end);
         }
