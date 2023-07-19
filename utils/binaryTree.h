@@ -10,3 +10,4 @@ struct TreeNode {
 
 TreeNode* buildBinaryTree(std::vector<std::string>& v);
 void bfs(TreeNode* root);
+void dfs(TreeNode* root, int target, TreeNode** node);

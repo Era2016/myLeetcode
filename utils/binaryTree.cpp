@@ -71,3 +71,14 @@ void bfs(TreeNode* root) {
     }
     cout << endl;
 }
+
+void dfs(TreeNode* root, int target, TreeNode** node) {
+    if (root) {
+        if (root->val == target) {
+            *node = root;
+            return;
+        }
+        dfs(root->left, target, node);
+        dfs(root->right, target, node);
+    }
+}
