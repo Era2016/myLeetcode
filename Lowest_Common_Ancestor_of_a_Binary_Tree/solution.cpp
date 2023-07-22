@@ -1,126 +1,81 @@
 #include <iostream>
 #include <unordered_map>
-#include <utility>
 #include <vector>
+#include <string>
 
 #include "../utils/binaryTree.h"
 
 using std::unordered_map;
 using std::vector;
+using std::string;
 class Solution {
 private:
-    unordered_map<int, TreeNode*> um;
-    unordered_map<int, TreeNode*> visit;
+    void dfs(TreeNode* root, unordered_map<int, TreeNode*>& um) {
+        if (root == nullptr) return;
+
+        if (root->left != nullptr) {
+            um[root->left->val] = root;
+            dfs(root->left, um);
+        }
+
+        if (root->right != nullptr) {
+            um[root->right->val] = root;
+            dfs(root->right, um);
+        }
+    }
 public:
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
         if (root == nullptr) return nullptr;
-
-        TreeNode* node;
+        
+        unordered_map<int, TreeNode*> um;
         um[root->val] = nullptr;
-        dfs(root);
+        dfs(root, um);
 
+        unordered_map<int, bool> visit;
         while (p != nullptr) {
-            visit[p->val] = p;
+            visit[p->val] = true;
             p = um[p->val];
         }
-        //printMap(visit);
-        
+
         while (q != nullptr) {
-            if (visit.count(q->val) == 1) {
-                node = q;
-                std::cout <<"found: " << node->val << std::endl;
+            if (visit[q->val] == true) {
                 break;
             }
-
+            visit[q->val] = true;
             q = um[q->val];
         }
-        return node;
-    }
 
-    void dfs(TreeNode* root) {
-        if (root == nullptr) return;
-
-        if (root->left) {
-            um[root->left->val] = root;    
-            dfs(root->left);
-        }
-
-        if (root->right) {
-            um[root->right->val] = root;
-            dfs(root->right);
-        }
-    }
-
-    void printMap(unordered_map<int, TreeNode*> mm) {
-        for (std::pair<int, TreeNode*> m: mm) {
-            std::cout << "key: " << m.first << " ;value: " << m.second->val << std::endl; 
-        }
-    }
-    void printPath(TreeNode* node) {
-        while (node != nullptr) {
-            std::cout << node->val << "\t";
-            node = um[node->val];
-        } 
-        std::cout << std::endl;
-    } 
-
-    void searchTreeNode(TreeNode* node, int value, TreeNode** target) {
-        if (node != nullptr) {
-            if (node->val == value) {
-                *target = node;
-                std::cout <<"target address: " << *target << std::endl;
-                return ;
-            }
-            searchTreeNode(node->left, value, target);
-            searchTreeNode(node->right, value, target);
-        }
+        return q;
     }
 };
 
 int main() {
-    Solution* so = new Solution();
+    Solution *so = new Solution();
     TreeNode *root, **p, **q;
     TreeNode *lowest;
-    TreeNode *tmp1, *tmp2;
-    vector<std::string> v;
+    vector<string> v;
 
+    *p = new TreeNode();
+    *q = new TreeNode();
 
     v = {"3","5","1","6","2","0","8","null","null","7","4"};
     root = buildBinaryTree(v);
-    std::cout << "build binaryTree done" << std::endl;
-
-    tmp1 = new TreeNode(); 
-    p = &tmp1;
-    so->searchTreeNode(root, 5, p);
-    std::cout << "p: " << (*p)->val << std::endl;
-
-    tmp2 = new TreeNode();
-    q = &tmp2;
-    so->searchTreeNode(root, 1, q);
-    std::cout << "q: " << (*q)->val << std::endl;
-    
-    //std::cout << "root: " << root->val << std::endl;
-    so->printPath(*p);
-    so->printPath(*q);
-    lowest = so->lowestCommonAncestor(root, *p, *q);    
+    dfs(root, 5, p);
+    dfs(root, 1, q);
+    lowest = so->lowestCommonAncestor(root, *p, *q);
     std::cout << "lowest Ancestor: " << lowest->val << std::endl;
 
-    //tmp1 = new TreeNode(); 
-    p = &tmp1;
-    so->searchTreeNode(root, 5, p);
-    std::cout << "p: " << (*p)->val << std::endl;
 
-    //tmp2 = new TreeNode();
-    q = &tmp2;
-    so->searchTreeNode(root, 4, q);
-    std::cout << "q: " << (*q)->val << std::endl;
-    
-    //std::cout << "root: " << root->val << std::endl;
-    so->printPath(*p);
-    so->printPath(*q);
-    lowest = so->lowestCommonAncestor(root, *p, *q);    
+    dfs(root, 5, p);
+    dfs(root, 4, q);
+    lowest = so->lowestCommonAncestor(root, *p, *q);
     std::cout << "lowest Ancestor: " << lowest->val << std::endl;
+    
 
-    delete tmp1;
-    delete tmp2;
+    v = {"1","2"}; 
+    root = buildBinaryTree(v);
+    dfs(root, 1, p);
+    dfs(root, 2, q);
+    lowest = so->lowestCommonAncestor(root, *p, *q);
+    std::cout << "lowest Ancestor: " << lowest->val << std::endl;
 }

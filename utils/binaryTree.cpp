@@ -76,6 +76,7 @@ void dfs(TreeNode* root, int target, TreeNode** node) {
     if (root) {
         if (root->val == target) {
             *node = root;
+            //node = &root; // failed, node是临时变量，修改其值不会影响到外部调用参数
             return;
         }
         dfs(root->left, target, node);

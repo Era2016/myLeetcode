@@ -53,17 +53,6 @@ public:
     }
 };
 
-void dfs(TreeNode* root, int target, TreeNode** node) {
-    if (root) {
-        if (root->val == target) {
-            *node = root;
-            return;
-        }
-        dfs(root->left, target, node);
-        dfs(root->right, target, node);
-    }
-}
-
 int main() {
     Solution *so = new Solution();
     TreeNode *root, *node;
