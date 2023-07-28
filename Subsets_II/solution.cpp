@@ -1,46 +1,51 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
+using std::vector;
 class Solution {
+private:
+    vector<vector<int>> result;
+    void backtrack(vector<int>& nums, vector<int>& subset, int idx) {
+        result.push_back(subset);
+        for (int i = idx; i < nums.size(); i ++) {
+            if (i != idx && nums[i] == nums[i-1]) {
+                continue;
+            }
+
+            subset.push_back(nums[i]);
+            backtrack(nums, subset, i+1);
+            subset.pop_back();
+        }
+    }
 public:
     vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        result.clear();
+        vector<int> subset;
         sort(nums.begin(), nums.end());
-        
-        vector<vector<int>> vv;
-        vector<int> v;
-        dfs(nums, vv, v, 0);
-        return vv;
-    }
-
-    void dfs(vector<int>& nums, vector<vector<int>>& vv, vector<int>& v, int idx) {
-        vv.push_back(v);
-        for (int i = idx; i < nums.size(); i ++) {
-            if (i > idx && nums[i] == nums[i-1]) continue;
-            //cout << "input stack: " << nums[i] << " index: "<< i << endl;
-            v.push_back(nums[i]);
-            dfs(nums, vv, v, i+1);
-            //cout << "output stack: " << v.back() << endl;
-            v.pop_back();
-        }
+        backtrack(nums, subset, 0);
+        return result;
     }
 };
 
-void print(vector<vector<int>>& vv) {
-    for (vector<vector<int>>::iterator iter = vv.begin(); iter != vv.end(); iter ++) {
-        for (vector<int>::iterator it = (*iter).begin(); it != (*iter).end(); it ++) {
-            cout << *it << "\t";
-        }
-        cout << endl;
-    }
-    cout << endl;
-}
-
 int main() {
-    Solution* so = new Solution();
-    vector<int> nums = {1,2,2};
+    Solution *so = new Solution();
+    vector<int> subset;
+    vector<vector<int>> result;
 
-    vector<vector<int>> vv = so->subsetsWithDup(nums); 
-    print(vv);
+    auto print=[](vector<vector<int>>& result) {
+        for (const auto& arr: result) {
+            for (const auto& v: arr) {
+                std::cout << v << "\t";
+            }
+            std::cout << std::endl;
+        }
+    };
+
+    subset = {1,2,2};
+    result = so->subsetsWithDup(subset);
+    print(result);
+
+    subset = {0}; 
+    result = so->subsetsWithDup(subset);
+    print(result);
 }
