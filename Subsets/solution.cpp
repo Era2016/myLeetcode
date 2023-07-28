@@ -1,42 +1,42 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
+using std::vector;
 class Solution {
+private:
+    vector<vector<int>> result;
+    void backtrack(vector<int>& nums, vector<int>& subs, int idx) {
+        result.push_back(subs);
+        for (int i = idx; i < nums.size(); i ++) {
+            subs.push_back(nums[i]);
+            backtrack(nums, subs, i+1);
+            subs.pop_back();
+        }
+    }
 public:
     vector<vector<int>> subsets(vector<int>& nums) {
-        vector<vector<int>> vv;
-        vector<int> v;
-
-        dfs(nums, vv, v, 0);
-        return vv;
-    }
-
-    void dfs(vector<int>& nums, vector<vector<int>>& vv, vector<int>& v, int idx) {
-        vv.push_back(v);
-
-        for (int i = idx; i < nums.size(); i ++) {
-            v.push_back(nums[i]);
-            dfs(nums, vv, v, i+1);
-            v.pop_back();
-        }
+        result.clear();
+        vector<int> subs;
+        backtrack(nums, subs, 0);
+        return result;
     }
 };
 
-void print(vector<vector<int>> vv) {
-    for (vector<vector<int>>::iterator iter = vv.begin(); iter != vv.end(); iter ++) {
-        for (vector<int>::iterator it = (*iter).begin(); it != (*iter).end(); it ++) {
-            cout << *it << "\t";
-        }
-        cout << endl;
-    }
-    cout << endl;
-}
-
 int main() {
-    vector<int> v = {1,2,3};
-    Solution* so = new Solution();
-    vector<vector<int>> vv = so->subsets(v);
-    print(vv);
+    Solution *so = new Solution();
+    vector<int> nums;
+    vector<vector<int>> result;
+
+    auto print=[](vector<vector<int>>& result) {
+        for (const auto& arr: result) {
+            for (const auto& v: arr) {
+                std::cout << v << "\t";
+            }
+            std::cout << std::endl;
+        }
+    };
+
+    nums = {1,2,3};
+    result = so->subsets(nums);
+    print(result);
 }

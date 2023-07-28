@@ -7,32 +7,32 @@ void print(vector<int>);
 void print(vector<vector<int>>);
 
 class Solution {
-public:
-    vector<vector<int>> permute(vector<int>& nums) {
-        vector<int> v;
-        vector<vector<int>> vv;
-        vector<int> used(nums.size(), 0);
-        dfs(nums, v, vv, used, 0);
-        return vv;
-    }
-
-    void dfs(vector<int>& nums, vector<int>& v, vector<vector<int>>& vv, vector<int>& used, int depth) {
-        if (depth == nums.size()) {
-            vv.push_back(v);
+private:
+    vector<vector<int>> result;
+    void backtrack(vector<int>& nums, vector<int>& v, vector<int>& used) {
+        if (v.size() == nums.size()) {
+            result.push_back(v);
             return;
         }
 
         for (int i = 0; i < nums.size(); i ++) {
-            if (!used[i]) {
-                used[i] = true;
-                v.push_back(nums[i]);
-                //print(v); // 输出中间结果
-                dfs(nums, v, vv, used, depth + 1);
-                used[i] = false;
-                v.pop_back();
-                //print(v); // 输出中间结果
-            }
+            if (used[i]) continue;
+
+            used[i] = true;
+            v.push_back(nums[i]);
+            //print(v); // 输出中间结果
+            backtrack(nums, v, used);
+            used[i] = false;
+            v.pop_back();
+            //print(v); // 输出中间结果
         }
+    }
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<int> v;
+        vector<int> used(nums.size(), 0);
+        backtrack(nums, v, used);
+        return result;
     }
 };
 
@@ -43,12 +43,6 @@ void print(vector<vector<int>> vv) {
         }
         cout << endl;
     }
-    cout << endl;
-}
-
-void print(vector<int> v) {
-    for (vector<int>::iterator it = v.begin(); it != v.end(); it ++)
-        cout << *it << "\t";
     cout << endl;
 }
 
