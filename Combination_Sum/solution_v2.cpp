@@ -5,61 +5,55 @@
 using namespace std;
 
 class Solution {
+private:
+    vector<vector<int>> result;
+    void backtrack(vector<int>& candidates, int target, vector<int>& combine, int idx) {
+        if (target == 0) {
+            result.push_back(combine);
+            return;
+        }
+
+        if (target < 0) {
+            return;
+        }
+
+        for (int i = idx; i < candidates.size(); i ++) {
+            combine.push_back(candidates[i]);
+            backtrack(candidates, target-candidates[i], combine, i);
+            combine.pop_back();
+        }
+    }
 public:
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> ans;
+        result.clear();
         vector<int> combine;
         // 排序后，可以进一步剪枝，减少复杂度
         sort(candidates.begin(), candidates.end());
-        dfs(candidates, target, ans, combine, 0);
-        return ans;
+        backtrack(candidates, target, combine, 0);
+        return result;
     }
-
-    void dfs(vector<int>& candidates, int target, vector<vector<int>>& ans, vector<int>& combine, int idx) {
-        if (target == 0) {
-            ans.push_back(combine);
-            return;
-        } else if (target < 0) {
-            return;
-        } else {
-            for (int i = idx; i < candidates.size(); i ++) {
-                combine.push_back(candidates[i]);
-                dfs(candidates, target - candidates[i], ans, combine, i);
-                combine.pop_back();
-            }
-        }
-    }
-
 };
 
-void print(vector<vector<int>> vv) {
-    for (vector<vector<int> >::iterator iter = vv.begin(); iter != vv.end(); ++ iter) {
-        for (vector<int>::iterator it = iter->begin(); it != iter->end(); ++ it) {
-            cout << *it << "\t";
-        }
-        cout << endl;
-    }
-    cout << endl;
-}
-
-void print(vector<int> v) {
-    for (vector<int>::iterator it = v.begin(); it != v.end(); ++ it)
-        cout << *it << "\t";
-    cout << endl;
-}
-
 int main() {
-    Solution* so = new Solution();
-    vector<vector<int>> vv;
+    Solution *so = new Solution();
+    vector<int> subset;
+    vector<vector<int>> result;
 
-    //vector<int> v = {2,3,6,7};
-    //int target = 7;
+    auto print=[](vector<vector<int>>& result) {
+        for (const auto& arr: result) {
+            for (const auto& v: arr) {
+                std::cout << v << "\t";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    };
 
-    vector<int> v = {2,3,5};
-    int target = 8;
+    subset = {2,3,6,7};
+    result = so->combinationSum(subset, 7);
+    print(result);
 
-    //vector<int> v = {2};
-    //int target = 1;
-    vv = so->combinationSum(v, target);
-    print(vv);
+    subset = {2,3,5}; 
+    result = so->combinationSum(subset, 8);
+    print(result);
 }

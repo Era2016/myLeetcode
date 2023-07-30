@@ -1,65 +1,62 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
+using std::vector;
 class Solution {
-public:
-    vector<vector<int>> permuteUnique(vector<int>& nums) {
-        vector<int> v;
-        vector<vector<int>> vv;
-        vector<int> used(nums.size(), 0);
-        sort(nums.begin(), nums.end());
-        dfs(nums, vv, v, used, 0);
-        return vv;
-    }
-
-    void dfs(vector<int>& nums, vector<vector<int>>& vv, vector<int>& v, vector<int>& used, int depth) {
-        if (depth == nums.size()) {
-            vv.push_back(v);
+private:
+    vector<vector<int>> result;
+    void backtrack(vector<int>& nums, vector<int>& permu, vector<bool>& used) {
+        if (permu.size() == nums.size()) {
+            result.push_back(permu);
             return;
         }
-        
+
         for (int i = 0; i < nums.size(); i ++) {
-            if (!used[i]) {
-                // 数据有序,相同数字相邻
-                // 选择从左往右第一个未被填过的数字
-                if (i > 0 && nums[i] == nums[i-1] && !used[i-1]) {
-                    continue;
-                } else {
-                    used[i] = 1;
-                    v.push_back(nums[i]);
-                    dfs(nums, vv, v, used, depth+1);
-                    used[i] = 0;
-                    v.pop_back();
-                } 
-            }
+            if (used[i]) continue;
+            // 如果前面的相邻相等元素没有用过，则跳过
+            if (i > 0 && nums[i] == nums[i-1] && !used[i-1]) continue;
+
+            permu.push_back(nums[i]);
+            used[i] = true;
+            backtrack(nums, permu, used);
+            permu.pop_back();
+            used[i] = false;
         }
+    }
+public:
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        result.clear();
+        vector<int> permu;
+        vector<bool> used(nums.size(), false);
+        sort(nums.begin(), nums.end());
+        backtrack(nums, permu, used);
+        return result;
     }
 };
 
-void print(vector<vector<int> > vv) {
-    for (vector<vector<int>>::iterator itea = vv.begin(); itea != vv.end(); itea ++) {
-        for (vector<int>::iterator it = (*itea).begin(); it != (*itea).end(); it ++) {
-            cout << *it << "\t";
-        }
-        cout << endl;
-    }
-	cout << endl;
-}
-
-void print(vector<int> v) {
-    for (vector<int>::iterator it = v.begin(); it != v.end(); it ++) 
-        cout << *it << "\t";
-    cout << endl;
-}
-
 int main() {
-	vector<vector<int> > vv;
-	vector<int> nums = {1,2,1};
-	//vector<int> nums = {1,2,3};
-	//vector<int> nums = {1,1,2,2};
-	Solution* so = new Solution();
-	vv = so->permuteUnique(nums);
-	print(vv);
+    Solution *so = new Solution();
+    vector<int> nums;
+    vector<vector<int>> result;
+
+    auto print=[](vector<vector<int>>& result) {
+        for (const auto& arr: result) {
+            for (const auto& val: arr) {
+                std::cout << val << "\t";
+            }
+            std::cout << std::endl; 
+        }
+        std::cout << std::endl; 
+    };
+    nums = {1,1,2};
+    result = so->permuteUnique(nums);
+    print(result);
+
+    nums = {1,2,3};
+    result = so->permuteUnique(nums);
+    print(result);
+
+    nums = {0,0,0,1,2};
+    result = so->permuteUnique(nums);
+    print(result);
 }
