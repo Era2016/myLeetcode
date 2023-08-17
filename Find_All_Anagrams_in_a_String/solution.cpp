@@ -15,7 +15,7 @@ public:
         int left = 0, right = 0;
         int valid = 0;
         vector<int> v;
-        while (right <= s.size()) {
+        while (right < s.size()) {
             char c = s[right ++];
             if (need.count(c)) {
                 window[c] ++;
