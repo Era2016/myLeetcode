@@ -9,22 +9,22 @@ using std::string;
 using std::unordered_set;
 
 class Solution {
-public:
+private:
     string lock_add(string lock, int index) {
         char arr[lock.length() + 1];
-        lock.copy(arr, lock.length() + 1);
-        std::cout << string(arr) << std::endl;
+        lock.copy(arr, lock.length());
+        arr[lock.length()] = '\0';
         if (arr[index] == '9') {
             arr[index] = '0';
         } else {
             arr[index]++;
         }
-        std::cout << string(arr) << std::endl;
         return string(arr);
     }
     string lock_minus(string lock, int index) {
         char arr[lock.length() + 1];
-        lock.copy(arr, lock.length() + 1);
+        lock.copy(arr, lock.length());
+        arr[lock.length()] = '\0';
         if (arr[index] == '0') {
             arr[index] = '9';
         } else {
@@ -40,7 +40,10 @@ public:
         for (auto val: deadends)  us.insert(val);
 
         q.push("0000");
-        us.insert("0000");
+        auto p = us.insert("0000");
+        if (p.second == false) { // 数据已存在，插入失败
+            return -1;
+        }
         int step = 0;
         while (!q.empty()) {
             int size = q.size();
@@ -76,13 +79,17 @@ int main() {
 
     deadends = {"0201","0101","0102","1212","2002"};
     target = "0202";
-    //std::cout << target << ":" << target.length()<<  std::endl;
-    so->lock_add(target, 0);
-
-    return 1;
     std::cout << so->openLock(deadends, target) << std::endl;
 
     deadends = {"8888"};
     target = "0009";
+    std::cout << so->openLock(deadends, target) << std::endl;
+
+    deadends = {"8887","8889","8878","8898","8788","8988","7888","9888"};
+    target = "8888";
+    std::cout << so->openLock(deadends, target) << std::endl;
+
+    deadends = {"0000"};
+    target = "8888";
     std::cout << so->openLock(deadends, target) << std::endl;
 }

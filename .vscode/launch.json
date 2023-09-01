@@ -17,13 +17,14 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/LFU_Cache/test",
+            "program": "${workspaceFolder}/Open_the_Lock/test",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "lldb",
+            "setupCommands": [{ "text": "-enable-pretty-printing" }]
         }
     ]
 }
