@@ -9,65 +9,55 @@ using std::string;
 using std::unordered_set;
 
 class Solution {
-private:
-    string lock_add(string lock, int index) {
-        char arr[lock.length() + 1];
-        lock.copy(arr, lock.length());
-        arr[lock.length()] = '\0';
-        if (arr[index] == '9') {
-            arr[index] = '0';
-        } else {
-            arr[index]++;
-        }
-        return string(arr);
-    }
-    string lock_minus(string lock, int index) {
-        char arr[lock.length() + 1];
-        lock.copy(arr, lock.length());
-        arr[lock.length()] = '\0';
-        if (arr[index] == '0') {
-            arr[index] = '9';
-        } else {
-            arr[index]--;
-        }
-        return string(arr);
-    }
-
 public:
     int openLock(vector<string>& deadends, string target) {
-        queue<string> q;
-        unordered_set<string> us;
-        for (auto val: deadends)  us.insert(val);
-
-        q.push("0000");
-        auto p = us.insert("0000");
-        if (p.second == false) { // 数据已存在，插入失败
+        unordered_set<string> us1, us2;
+        unordered_set<string> visit(deadends.begin(), deadends.end());
+        
+        auto p = visit.insert("0000");
+        if (p.second == false) {
             return -1;
         }
-        int step = 0;
-        while (!q.empty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i ++) {
-                string lock = q.front(); q.pop();
-                if (lock == target) {
-                    return step;
+        us1.insert("0000");
+        us2.insert(target);
+        int depth = 0;
+        
+        while (!us1.empty() && !us2.empty()) {
+            // 哈希集合在遍历的过程中不能修改，用 temp 存储扩散结果
+            unordered_set<string> tmp;
+            // 将us1中的所有节点向周围扩散
+            for (auto str: us1) {
+                if (visit.find(str) != visit.end()) {
+                    continue;
                 }
-                for (int j = 0; j < 4; j ++) {
-                    string newAdded = lock_add(lock, j);
-                    if (us.find(newAdded) == us.end()) {
-                        q.push(newAdded);
-                        us.insert(newAdded);
+                if (us2.find(str) != us2.end()) {
+                    return depth;
+                }
+
+                for (int i = 0; i < 4; i ++) {
+                    string newAdd = str;
+                    newAdd[i] = newAdd[i] == '9'? '0': newAdd[i]+1;
+                    if (visit.find(newAdd) == visit.end()) {
+                        tmp.insert(newAdd);
+                        visit.insert(newAdd);
                     }
 
-                    string newMinus = lock_minus(lock, j);
-                    if (us.find(newMinus) == us.end()) {
-                        q.push(newMinus);
-                        us.insert(newMinus);
+                    string newMinus = str;
+                    newMinus[i] = newMinus[i] == '0'? '9': newMinus[i]-1;
+                    if (visit.find(newMinus) == visit.end()) {
+                        tmp.insert(newMinus);
+                        visit.insert(newMinus);
                     }
                 }
-            }// end of for
-            step ++;
-        } // end of while
+            }
+            depth ++;
+            
+            // tmp 相当于 q1
+            // 这里交换 q1 q2，下一轮 while 就是扩散 q2
+            us1 = us2;
+            us2 = tmp;
+            //tmp.clear();
+        }
         return -1;
     }
 };
@@ -80,6 +70,7 @@ int main() {
     deadends = {"0201","0101","0102","1212","2002"};
     target = "0202";
     std::cout << so->openLock(deadends, target) << std::endl;
+    return 1;
 
     deadends = {"8888"};
     target = "0009";
