@@ -17,8 +17,11 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Open_the_Lock/test",
-            "args": [],
+            "program": "${workspaceFolder}/Rotate_List/test",
+            "args": [
+                //"-g",
+                //"${fileDirname}/../utils/listNode.cpp",
+            ],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",
             "environment": [],

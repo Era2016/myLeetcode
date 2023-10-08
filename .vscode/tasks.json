@@ -13,6 +13,7 @@
                 "-g",
                 "-fsanitize=address",
                 "${file}",
+                //"${fileDirname}/../utils/listNode.cpp",
                 "-o",
                 "${fileDirname}/test"
             ],
