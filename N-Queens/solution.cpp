@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include <ctime>
+
 using std::vector;
 using std::string;
 class Solution {
@@ -52,6 +54,7 @@ public:
 int main() {
     Solution *so = new Solution();
     vector<vector<string>> vv;
+    clock_t start, end;
 
     auto print=[](vector<vector<string>>& vv) {
         for (auto arr: vv) {
@@ -62,6 +65,25 @@ int main() {
         }
     };
 
+    start = clock();
     vv = so->solveNQueens(4);
-    print(vv);
+    end = clock();
+    std::cout << "Spent " << double(end - start) / CLOCKS_PER_SEC << " seconds." << std::endl;  // 输出时间（单位：s）
+
+    //print(vv);
+
+    start = clock();
+    vv = so->solveNQueens(8);
+    end = clock();
+    std::cout << "Spent " << double(end - start) / CLOCKS_PER_SEC << " seconds." << std::endl;  // 输出时间（单位：s）
+
+    start = clock();
+    vv = so->solveNQueens(9);
+    end = clock();
+    std::cout << "Spent " << double(end - start) / CLOCKS_PER_SEC << " seconds." << std::endl;  // 输出时间（单位：s）
+
+    start = clock();
+    vv = so->solveNQueens(10);
+    end = clock();
+    std::cout << "Spent " << double(end - start) / CLOCKS_PER_SEC << " seconds." << std::endl;  // 输出时间（单位：s）
 }
