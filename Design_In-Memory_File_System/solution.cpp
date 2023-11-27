@@ -153,14 +153,26 @@ private:
 int main() {
     FileSystem* fs = new FileSystem();
     vector<string> v;
+    auto print=[](vector<string>& arr) {
+        for (auto iter: arr) {
+            cout << iter << endl;
+        }
+        cout << endl;
+    };
     v = fs->ls("/"); // ls /a/b -> exception
-    for (auto iter : v) {
-        cout << iter << endl;
-    }
+    print(v);
 
-    fs->mkdir("/a/b/c");
-    v = fs->ls("/a");
-    for (auto iter : v) {
-        cout << iter << endl;
-    }
+    fs->mkdir("/home/fan/test");
+    v = fs->ls("/home");
+    print(v);
+
+    fs->mkdir("/home/fan/bin");
+    v = fs->ls("/home/fan");
+    print(v);
+
+    fs->addContentToFile("/home/fan/text.txt", "hello world");
+    v = fs->ls("/home/fan");
+    print(v);
+
+    cout << fs->readContentFromFile("/home/fan/text.txt");
 }
