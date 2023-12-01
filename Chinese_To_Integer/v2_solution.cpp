@@ -96,6 +96,5 @@ int main() {
 
     //wcout << chineseNumber1 << " -> " << number1 << endl;
     //wcout << chineseNumber2 << " -> " << number2 << endl;
-
     return 0;
 }
