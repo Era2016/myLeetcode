@@ -1,0 +1,4 @@
+solution.cpp 未能解决字符集问题
+v2_solution.cpp chatgpt所提供,答案不正确
+
+go-version 可以解出当前解,是否全面待验证
