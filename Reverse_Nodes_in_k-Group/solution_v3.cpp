@@ -40,10 +40,8 @@ public:
         ListNode *prev = dummy;
         ListNode *tail, *cur, *next;
         tail = cur = head;
-        int index = 0;
         while (tail != nullptr) {
             for (int i = 1; i < k && tail != nullptr; i ++) {
-                index ++;
                 tail = tail->next; 
             }
             if (tail == nullptr) {
@@ -57,7 +55,6 @@ public:
             prev = cur;
             cur = prev->next;
             tail = cur;
-            index ++;
         }
         return dummy->next;
     }
