@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <bitset>
 
 using std::vector;
+using std::bitset;
 class Solution {
 public:
     vector<int> grayCode(int n) {
@@ -11,7 +13,10 @@ public:
         for (int i = 0; i < n; i ++) {
             int size = res.size();
             for (int j = size-1; j >= 0; j --) {
-                res.emplace_back(res[j]| (1 << i));
+                int num = res[j]| (1 << i);
+                std::cout << "before: " << bitset<8>(res[j]) << "; number: " << bitset<8>(num) << std::endl;
+                res.emplace_back(num);
+                //res.emplace_back(res[j]| (1 << i));
             }
         }
         return res;
@@ -32,5 +37,8 @@ int main() {
     print(res);
 
     res = so->grayCode(3);
+    print(res);
+
+    res = so->grayCode(4);
     print(res);
 }
