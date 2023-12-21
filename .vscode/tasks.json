@@ -13,7 +13,7 @@
                 "-g",
                 "-fsanitize=address",
                 "${file}",
-                //"${fileDirname}/../utils/listNode.cpp",
+                "${fileDirname}/../utils/binaryTree.cpp",
                 "-o",
                 "${fileDirname}/test"
             ],

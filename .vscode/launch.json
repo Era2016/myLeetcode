@@ -17,10 +17,10 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Rotate_List/test",
+            "program": "${workspaceFolder}/Serialize_and_Deserialize_Binary_Tree/test",
             "args": [
-                //"-g",
-                //"${fileDirname}/../utils/listNode.cpp",
+                "-g",
+                "${fileDirname}/../utils/binaryTree.cpp",
             ],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",

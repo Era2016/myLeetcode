@@ -66,6 +66,7 @@
         "set": "cpp",
         "sstream": "cpp",
         "stack": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "strstream": "cpp"
     }
 }
