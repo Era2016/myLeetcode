@@ -21,10 +21,10 @@ int josephus(int n, int m) {
     }
 
     // 将尾节点连接到头节点，形成循环链表
+    Node* prev = current;
     current->next = head;
 
     // 模拟约瑟夫环过程
-    Node* prev = nullptr;
     while (head->next != head) {
         for (int i = 1; i < m; ++i) {
             prev = head;
@@ -47,9 +47,10 @@ int main() {
     int n = 7; // 总人数
     int m = 3; // 数到第 m 个人
 
-    int survivor = josephus(n, m);
-
-    cout << "The survivor is at position: " << survivor << endl;
+    cout << "The survivor is at position: " << josephus(3, 1) << endl;
+    cout << "The survivor is at position: " << josephus(3, 2) << endl;
+    cout << "The survivor is at position: " << josephus(5, 2) << endl;
+    cout << "The survivor is at position: " << josephus(5, 3) << endl;
 
     return 0;
 }
