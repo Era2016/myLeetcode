@@ -43,4 +43,7 @@ int main() {
 
     coins = {1};
     std::cout << so->coinChange(coins, 0) << std::endl;
+
+    coins = {411,412,413,414,415,416,417,418,419,420,421,422};
+    std::cout << so->coinChange(coins, 9864) << std::endl;
 }
