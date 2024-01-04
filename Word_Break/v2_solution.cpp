@@ -1,31 +1,31 @@
+#include <climits>
 #include <iostream>
-#include <unordered_set>
 #include <vector>
 #include <algorithm>
 
 using std::vector;
-using std::unordered_set;
 using std::string;
 class Solution {
-public:
-    bool wordBreak(string s, vector<string>& wordDict) {
-        unordered_set<string> us(wordDict.begin(), wordDict.end());
-        int maxStringLength = INT_MIN;
-        for (auto word: wordDict) {
-            maxStringLength = std::max(maxStringLength, (int)word.length()); 
-        }
-        vector<int> dp(s.length()+1, false);
-        dp[0] = true;
-        for (int i = 1; i <= s.length(); i ++) {
-            for (int j = std::max(0, i-maxStringLength); j < i; j ++) {
-                if (dp[j] && us.find(s.substr(j, i-j)) != us.end()) {
-                    dp[i] = true;
-                    break;
+private:
+    bool backtrack(string s, int index, vector<string>& wordDict) {
+        if (index == s.length()) { return true; }
+        for (auto &str: wordDict) {
+            if (s.substr(index, str.length()) == str) {
+                if (backtrack(s, index+str.length(), wordDict)) {
+                    return true;
                 }
             }
         }
-
-        return dp[s.length()];
+        return false;
+    }
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        sort(wordDict.begin(), wordDict.end(),
+                [](const string s1, const string s2) {
+                    return s1.length() > s2.length();
+                });
+        
+        return backtrack(s, 0, wordDict);
     }
 };
 
