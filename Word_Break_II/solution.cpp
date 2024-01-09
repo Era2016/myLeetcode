@@ -11,16 +11,16 @@ void print(unordered_map<string, vector<string> > v);
 class Solution {
 public:
     vector<string> wordBreak(string s, vector<string>& wordDict) {
-        unordered_map<string, vector<string> > m;
-        return wordBreak(s, wordDict, m);
+        unordered_map<string, vector<string> > memo;
+        return dp(s, wordDict, memo);
     }
 private:
-    vector<string> wordBreak(string s, vector<string>& wordDict, unordered_map<string, vector<string> >& m) {
+    vector<string> dp(string s, vector<string>& wordDict, unordered_map<string, vector<string> >& memo) {
         if (s.length() == 0) {
             return {""};
         }
-        if (m.count(s) != 0) {
-            return m[s];
+        if (memo.count(s) != 0) {
+            return memo[s];
         }
 
         vector<string> v;
@@ -28,16 +28,12 @@ private:
             if (s.substr(0, word.size()) != word) {
                 continue;
             }
-            vector<string> res = wordBreak(s.substr(word.size()), wordDict, m);
-            //print(res);
+            vector<string> res = dp(s.substr(word.size()), wordDict, memo);
             for (string str: res) {
-                //string tmp = word + (str.empty() ? "" : " ") + str;
-                //cout << "insert val: " << tmp << endl;
-                //v.push_back(tmp);
                 v.push_back(word + (str.empty() ? "" : " ") + str);
             }
         }
-        m[s] = v;
+        memo[s] = v;
         return v;
     }
 };
