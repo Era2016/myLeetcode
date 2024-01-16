@@ -1,61 +1,38 @@
+#include <climits>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
-using namespace std;
-
+using std::vector;
 class Solution {
-    public:
-        int maxSubArray(vector<int>& nums) {
-            int sum = 0;
-            int max = nums[0];
-            for (int i = 0; i < (int)nums.size(); ++ i) {
-                // sum = max(nums[i], sum+nums[i])
-                if (sum + nums[i] < nums[i]) {
-                    sum = nums[i];
-                } else {
-                    sum += nums[i];
-                }
-
-                //cout << "current sum: " << sum << endl;
-                if (max < sum) {
-                    max = sum;
-                    //cout << "current max: " << max << endl;
-                }
+public:
+    int maxSubArray(vector<int>& nums) {
+        vector<int> dp(nums.size(), INT_MIN);
+        dp[0] = nums[0];
+        int maxSum = nums[0];
+        for (int i = 1; i < nums.size(); i ++) {
+            if (dp[i-1] >= 0) {
+                dp[i] = dp[i-1] + nums[i];
+            } else {
+                dp[i] = nums[i];
             }
-            return max;
-
-        }
-
-        int maxSubArray_v2(vector<int>& nums) {
-            if (nums.size() == 0) {
-                return 0;
-            }
-            int result = nums[0], sum = nums[0];
-            for (size_t i = 1; i < nums.size(); ++i) {
-                sum = max(sum + nums[i], nums[i]);
-                result = max(result, sum);
-            }
-            return result;
-        }
+            maxSum = std::max(maxSum, dp[i]);
+        } 
+        return maxSum;
+    }
 };
 
-int main()
-{
+int main() {
+    Solution *so = new Solution();
+    vector<int> nums;
 
-    Solution* so = new Solution();
-    //int arr[] = {-2,1,-3,4,-1,2,1,-5,4};
-    int arr[] = {-1};
-    vector<int> v(begin(arr), end(arr));
-    /*int tmp;
-      while (true) {
-      cin >> tmp;
-      if (tmp == -9) {
-      break;
-      }
-      v.push_back(tmp);
-      }*/
+    nums = {-2,1,-3,4,-1,2,1,-5,4};
+    //std::cout << so->maxSubArray(nums) << std::endl;
+    assert(so->maxSubArray(nums) == 6);
 
-    int result = so->maxSubArray(v);
-    cout << result << endl;
-    return 0;
+    nums = {1};
+    assert(so->maxSubArray(nums) == 1);
+
+    nums = {5,4,-1,7,8};
+    assert(so->maxSubArray(nums) == 23);
 }
