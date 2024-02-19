@@ -1,0 +1,13 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     test
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003C00, symSize: 0x110 }
+  - { offsetInCU: 0x3B, offset: 0x3B, size: 0x8, addend: 0x0, symName: ___func__.main, symObjAddr: 0x220, symBinAddr: 0x100003E60, symSize: 0x0 }
+  - { offsetInCU: 0x6B, offset: 0x6B, size: 0x8, addend: 0x0, symName: _.str, symObjAddr: 0x240, symBinAddr: 0x100003E80, symSize: 0x0 }
+  - { offsetInCU: 0x88, offset: 0x88, size: 0x8, addend: 0x0, symName: _.str.1, symObjAddr: 0x260, symBinAddr: 0x100003EA0, symSize: 0x0 }
+  - { offsetInCU: 0xA5, offset: 0xA5, size: 0x8, addend: 0x0, symName: _.str.2, symObjAddr: 0x2A0, symBinAddr: 0x100003EE0, symSize: 0x0 }
+  - { offsetInCU: 0xC2, offset: 0xC2, size: 0x8, addend: 0x0, symName: _.str.3, symObjAddr: 0x2E0, symBinAddr: 0x100003F20, symSize: 0x0 }
+  - { offsetInCU: 0x2D43, offset: 0x2D43, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003C00, symSize: 0x110 }
+  - { offsetInCU: 0x2D95, offset: 0x2D95, size: 0x8, addend: 0x0, symName: __ZN8Solution7reverseEi, symObjAddr: 0x110, symBinAddr: 0x100003D10, symSize: 0x90 }
+...

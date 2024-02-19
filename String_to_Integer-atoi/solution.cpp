@@ -22,26 +22,6 @@ class Solution {
                 index ++;
             }
 
-            /*unsigned int result = 0;
-            for (int i = index; i < length; ++ i) {
-                if (str[i] >= '0' && str[i] <= '9') {
-                    if (!negative) {
-                        if ((result == INT_MAX/10 && str[i] < '7') || result < INT_MAX/10) {
-                            result = result * 10 + str[i] - '0';
-                        } else {
-                            result = INT_MAX;
-                        }
-                    } else {
-                        if ((result == INT_MAX/10 && str[i] < '8') || result < INT_MAX/10) {                        //if (result * 10 < INT_MAX + 1 - str[i] + '0') {
-                            result = result * 10 + str[i] - '0';
-                        } else {
-                            result = INT_MIN;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }*/
             long result = 0;
             while (index < length) {
                 if (str[index] < '0' || str[index] > '9') {
