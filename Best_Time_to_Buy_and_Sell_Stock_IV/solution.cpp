@@ -17,7 +17,10 @@ public:
         vector<vector<int>> buy(n, vector<int>(k+1, 0));
         vector<vector<int>> sell(n, vector<int>(k+1, 0));
 
-        for (int j = 1; j <= k; j ++) sell[0][j] = buy[0][j] = INT_MIN/2;
+        for (int j = 1; j <= k; j ++) {
+            sell[0][j] = buy[0][j] = INT_MIN/2;
+            //buy[0][j] = INT_MIN/2; // 同样满足所有用例，稍慢
+        }
         buy[0][0] = -prices[0];
         sell[0][0] = 0;
         for (int i = 1; i < n; i ++) {
