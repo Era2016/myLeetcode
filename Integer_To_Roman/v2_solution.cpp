@@ -33,3 +33,13 @@ public:
         return roman;
     }
 };
+
+int main() {
+    Solution *so = new Solution();
+    std::cout << so->intToRoman(3) << std::endl;
+    std::cout << so->intToRoman(4) << std::endl;
+    std::cout << so->intToRoman(9) << std::endl;
+    std::cout << so->intToRoman(58) << std::endl;
+    std::cout << so->intToRoman(1994) << std::endl;
+    std::cout << so->intToRoman(1600) << std::endl;
+}

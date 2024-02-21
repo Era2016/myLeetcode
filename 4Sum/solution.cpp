@@ -1,80 +1,79 @@
-#include<iostream>
-#include<vector>
-#include<map>
+#include <iostream>
+#include <vector>
 
-using namespace std;
-
+using std::vector;
 class Solution {
-    public:
-        vector<vector<int> > fourSum(vector<int>& nums, int target) {
-            vector<vector<int> > vv;
-            sort(nums.begin(), nums.end());
-            int length = (int)nums.size();
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int len = nums.size();
+        if (len < 4) return {};
+        
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        for (int i = 0; i < len-3; i ++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            if ((long)nums[i]+nums[i+1]+nums[i+2]+nums[i+3] > target) {
+                break;
+            }
+            if ((long)nums[i]+nums[len-3]+nums[len-2]+nums[len-1] < target) {
+                continue;
+            }
 
-            for (int i = 0; i < length - 3; i ++) {
-                //cout << "hello" << endl;
-                if (i > 0 && nums[i] == nums[i-1]) {
+            for (int j = i+1; j < len-2; j ++) {
+                if (j > i+1 && nums[j] == nums[j-1]) continue;
+                if ((long)nums[i]+nums[j]+nums[j+1]+nums[j+2] > target) {
+                    break;
+                }
+                if ((long)nums[i]+nums[j]+nums[len-2]+nums[len-1] < target) {
                     continue;
                 }
-                for (int j = i + 1; j < length - 2; ++ j) {
-                    //cout << "world" << endl;
-                    if (j > i + 1 && nums[j] == nums[j-1]) {
-                        continue;
+
+                int left = j+1, right = len-1;
+                while (left < right) {
+                    long cur = (long)nums[i]+nums[j]+nums[left]+nums[right]; 
+                    if (cur < target) {
+                        left ++;
+                    } else if (cur > target) {
+                        right --;
+                    } else {
+                        res.push_back({nums[i], nums[j], nums[left], nums[right]});                        
+                        left ++; while (left < right && nums[left] == nums[left-1]) left ++;
+                        right --; while (left < right && nums[right] == nums[right+1]) right --;
                     }
-                    int start = j + 1;
-                    int end = length - 1;
-                    //int sum = nums[i] + nums[j] + nums[start] + nums[end];
-                    while (start < end) {
-                        int sum = nums[i] + nums[j] + nums[start] + nums[end];
-                        //cout << i << "\t"<< j<<"\t" <<start<< "\t" << end << endl;
-                        if (sum == target) {
-                            vector<int> v;
-                            v.push_back(nums[i]);
-                            v.push_back(nums[j]);
-                            v.push_back(nums[start]);
-                            v.push_back(nums[end]);
-                            vv.push_back(v);
-                            //cout << i << "\t" << j << "\t" << start << "\t" << end << endl; 
-                            start ++;
-                            end --;
-                            while (start < end && nums[start] == nums[start-1]) {
-                                start ++;
-                            }
-                            while (end > start && nums[end] == nums[end+1]) {
-                                end --;
-                            }
-                        } else if (sum < target) {
-                            start ++;
-                        } else {
-                            end --;
-                        }
-                    }// end of while 
-                }// end of j while
-            }// end of i while
-            return vv;
+                }
+            }
         }
+        return res;
+    }
 };
 
-int main()
-{
+int main() {
+    Solution *so = new Solution();
     vector<int> v;
-    v.push_back(1);
-    v.push_back(0);
-    v.push_back(-1);
-    v.push_back(0);
-    v.push_back(-2);
-    v.push_back(2);
-    Solution* so = new Solution();
-    vector<vector<int> > vv;
-    vv = so->fourSum(v, 0);
-    for (vector<vector<int> >::iterator iter = vv.begin(); iter != vv.end(); ++ iter) {
-
-        vector<int> v = *iter;
-        for (vector<int>::iterator it = v.begin(); it != v.end(); ++ it) {
-            cout << (*it) << "\t";
+    vector<vector<int>> vv;
+    auto print=[](vector<vector<int>>& vv) {
+        for (auto v: vv) {
+            for (auto val: v) {
+                std::cout << val << " ";
+            }
+            std::cout << "\n";
         }
-        cout << endl;
-    }
+        std::cout << "\n";
+    };
+    
+    v = {1,0,-1,0,-2,2};
+    vv = so->fourSum(v, 0);
+    print(vv);
 
-    return 0;
+    v = {2,2,2,2,2};
+    vv = so->fourSum(v, 8);
+    print(vv);
+
+    v = {-1,0,-5,-2,-2,-4,0,1,-2};
+    vv = so->fourSum(v, -9);
+    print(vv);
+
+    v = {1000000000,1000000000,1000000000,1000000000};
+    vv = so->fourSum(v, -9);
+    print(vv);
 }
