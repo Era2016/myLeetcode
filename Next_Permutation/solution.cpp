@@ -2,7 +2,6 @@
 #include <vector>
 
 using namespace std;
-void print(vector<int>);
 
 class Solution {
 public:
@@ -48,24 +47,30 @@ public:
             }
             swap(nums[i], nums[j]);
         }
+        // 此时已经是倒叙了
         reverse(nums.begin() + i + 1, nums.end());
     }
 };
 
-void print(vector<int> v) {
-    for (vector<int>::iterator it = v.begin(); it != v.end(); it ++) {
-        cout << *it << "\t";
-    }
-    cout << endl;
-}
-
 int main() {
-    //vector<int> v = {1,2,3,4,5,6}; // 123465
-    //vector<int> v = {1,2,4,6,5,3}; // 125346
-    //vector<int> v = {1}; // 
-    vector<int> v = {3,2,1}; // 321
-    Solution* so = new Solution();
-    print(v);
-    so->nextPermutation(v);
-    print(v);
+    Solution *so = new Solution();
+    vector<int> nums;
+    auto print=[](vector<int>& nums) {
+        for (const auto& n: nums) {
+            std::cout << n << " ";
+        }
+        std::cout << "\n";
+    };
+
+    nums = {1,2,3,4,5};
+    for (int i = 0; i < 120; i ++) {
+        so->nextPermutation_v2(nums);
+        print(nums);
+    } 
+
+    nums = {1,1,5};
+    for (int i = 0; i < 6; i ++) {
+        so->nextPermutation_v2(nums);
+        print(nums);
+    }
 }

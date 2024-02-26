@@ -3,26 +3,6 @@
 #include <stack>
 #include <algorithm>
 
-/*
-Stack<Integer> stk = new Stack<>();
-for (int i = 0; i < s.length(); i++) {
-    if (s.charAt(i) == '(') {
-        // 遇到左括号，记录索引
-        stk.push(i);
-    } else {
-        // 遇到右括号
-        if (!stk.isEmpty()) {
-            // 配对的左括号对应索引，[leftIndex, i] 是一个合法括号子串
-            int leftIndex = stk.pop();
-            // 这个合法括号子串的长度
-            int len = 1 + i - leftIndex;
-        } else {
-            // 没有配对的左括号
-        }
-    }
-}
-*/
-
 using std::string;
 using std::vector;
 using std::stack;
