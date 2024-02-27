@@ -13,46 +13,46 @@ using namespace std;
  */
 
 class Solution {
-	public :
-		int jump(vector<int>& nums) {
-			if (nums.size() == 0) {
-				return 0;
-			}
+public:
+    int jump(vector<int>& nums) {
+        if (nums.size() == 0) {
+            return 0;
+        }
 
-			int reach = 0;
-			int lastReach = 0;
-			int step = 0;
+        int reach = 0;
+        int lastReach = 0;
+        int step = 0;
 
-			for (int i = 0; i <= reach && i < (int)nums.size(); ++ i) {
-				if (lastReach < i) {
-					step ++;
-					lastReach = reach;
-					cout << "current step : " << step << endl;
-				}
+        for (int i = 0; i <= reach && i < (int)nums.size(); ++ i) {
+            if (lastReach < i) {
+                step ++;
+                lastReach = reach;
+                cout << "current step : " << step << endl;
+            }
 
-				reach = max(reach, nums[i]+i);
-				cout << "current reach : " << reach << endl;
-			}
+            reach = max(reach, nums[i]+i);
+            cout << "current reach : " << reach << endl;
+        }
 
-			if (reach < (int) nums.size() - 1) {
-				return 0;
-			}
+        if (reach < (int) nums.size() - 1) {
+            return 0;
+        }
 
-			return step;
-		}
+        return step;
+    }
 };
 
 
 int main()
 {
-	Solution* so = new Solution();
-	//int arr[] = {2,3,1,1,4};
-	int arr[] = {1,3,2};
-	//int arr[] = {3,2,1,0,4};
+    Solution* so = new Solution();
+    //int arr[] = {2,3,1,1,4};
+    int arr[] = {1,3,2};
+    //int arr[] = {3,2,1,0,4};
 
-	vector<int> v(begin(arr), end(arr));
-	int result = so->jump(v);
+    vector<int> v(begin(arr), end(arr));
+    int result = so->jump(v);
 
-	cout << result << endl;
+    cout << result << endl;
 }
 

@@ -1,84 +1,55 @@
 #include <iostream>
 #include <vector>
-#include <map>
-#include <algorithm>
+#include <unordered_map>
 
-using namespace std;
-
+using std::vector;
+using std::string;
+using std::unordered_map;
 class Solution {
-    public:
-        vector<vector<string> > groupAnagrams(vector<string>& strs) {
-            map<string, vector<string> >m;
-            for (vector<string>::iterator iter = strs.begin(); iter != strs.end(); ++ iter) {
-                //string sortedStr = stringSort(*iter);
-                string sortedStr = *iter;
-                sort(sortedStr.begin(), sortedStr.end());
-                map<string, vector<string> >::iterator it = m.find(sortedStr);
-                if (it == m.end()) {
-                    vector<string> v;
-                    v.push_back(*iter);
-                    m.insert(pair<string, vector<string> >(sortedStr, v));
-                } else {
-                    //vector<string> v = it->second;
-                    //v.push_back(*iter);
-                    (it->second).push_back(*iter);
-                }
-            } 
-
-            vector<vector<string> > vv;
-            for (map<string, vector<string> >::iterator iter = m.begin(); iter != m.end(); ++ iter) {
-                vv.push_back(iter->second);
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string, vector<string>> um;
+        for (const auto& str: strs) {
+            string tmp = str;
+            sort(tmp.begin(), tmp.end());
+            if (um.find(tmp) != um.end()) {
+                um[tmp].push_back(str);
+            } else {
+                um[tmp] = {str};
             }
-            return vv;
         }
 
-        string stringSort (string str) {
-            for (int i = 1; i < (int)str.length(); ++ i) {
-                int j = i - 1;
-                int temp = str[j+1];
-                while (j >= 0 && str[j] > temp) {
-                    str[j+1] = str[j];
-                    j --;
-                }
-                str[j+1] = temp;
-            }
-            return str;
+        vector<vector<string>> res;
+        for (auto v: um) {
+            res.push_back(v.second);
         }
-        vector<vector<string>> groupAnagrams_v2(vector<string>& strs) {
-            map<string, vector<string> > mp;
-            vector<vector<string> > res;
-            for(string s: strs){
-                string temp = s;
-                sort(temp.begin(), temp.end());
-                mp[temp].push_back(s);
-            }
-            for(auto w: mp){
-                vector<string> temp_res = w.second;
-                res.push_back(temp_res);
-            }
-            return res;
-        }
+        return res;
+    }
 };
 
-int main()
-{
-    Solution* so = new Solution();
-    //string str = so->sort("a");
-    //cout << str << endl;
-    vector<string> v;
-    v.push_back("eat");
-    v.push_back("tea");
-    v.push_back("tan");
-    v.push_back("ate");
-    v.push_back("nat");
-    v.push_back("bat");
-
-    vector<vector<string> > vv = so->groupAnagrams(v);
-    for (vector<vector<string> >::iterator iter = vv.begin(); iter != vv.end(); ++ iter) {
-        for (vector<string>::iterator it = iter->begin(); it != iter->end(); ++ it) {
-            cout << *it << ",";
+int main() {
+    Solution *so = new Solution();
+    vector<string> strs;
+    vector<vector<string>> res;
+    auto print=[&]() {
+        for (const auto& arr: res) {
+            for (const auto& val: arr) {
+                std::cout << val << " ";
+            }
+            std::cout << std::endl;
         }
-        cout << endl;
-    }
-    return 0;
+        std::cout << std::endl;
+    };
+
+    strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
+    res = so->groupAnagrams(strs);
+    print();
+
+    strs = {"eat"}; 
+    res = so->groupAnagrams(strs);
+    print();
+
+    strs = {""}; 
+    res = so->groupAnagrams(strs);
+    print();
 }
