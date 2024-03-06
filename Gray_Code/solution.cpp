@@ -12,6 +12,7 @@ public:
         res.emplace_back(0);
         for (int i = 0; i < n; i ++) {
             int size = res.size();
+            std::cout << "size: " << size << std::endl;
             for (int j = size-1; j >= 0; j --) {
                 int num = res[j]| (1 << i);
                 std::cout << "before: " << bitset<8>(res[j]) << "; number: " << bitset<8>(num) << std::endl;
