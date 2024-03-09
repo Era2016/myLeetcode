@@ -64,6 +64,7 @@ public:
         }
         for (auto p: record) {
             vector<vector<int>> visit(m, vector<int>(n, 0));
+            visit[p.first][p.second] = true;
             if (backtrack(board, p, visit, word, 1) == true) {
                 return true;
             }
