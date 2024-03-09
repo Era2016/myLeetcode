@@ -11,3 +11,5 @@ struct TreeNode {
 TreeNode* buildBinaryTree(std::vector<std::string>& v);
 void bfs(TreeNode* root);
 void dfs(TreeNode* root, int target, TreeNode** node);
+void dfs(TreeNode* root, std::vector<int>& v);
+void printDFSBinaryTree(TreeNode* root);

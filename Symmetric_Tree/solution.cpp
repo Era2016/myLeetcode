@@ -25,6 +25,7 @@ public:
             if (p1->val != p2->val) { return false; }
             q.push(p1->left);
             q.push(p2->right);
+
             q.push(p1->right);
             q.push(p2->left);
         }

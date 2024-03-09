@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ratio>
 #include <vector>
 #include <queue>
 #include "binaryTree.h"
@@ -82,4 +83,21 @@ void dfs(TreeNode* root, int target, TreeNode** node) {
         dfs(root->left, target, node);
         dfs(root->right, target, node);
     }
+}
+
+void dfs(TreeNode* root, vector<int>& v) {
+    if (root) {
+        dfs(root->left, v);
+        v.push_back(root->val);
+        dfs(root->right, v);
+    }
+}
+
+void printDFSBinaryTree(TreeNode *root) {
+    vector<int> v;
+    dfs(root, v);
+    for (auto i: v) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
 }
