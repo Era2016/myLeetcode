@@ -1,5 +1,6 @@
 #include <climits>
 #include <iostream>
+#include <vector>
 
 #include "../utils/binaryTree.h"
 using namespace std;
@@ -26,3 +27,21 @@ private:
         return max(left, right)+root->val;
     }
 };
+
+int main() {
+    Solution *so = new Solution();
+    vector<string> v;
+    TreeNode *root;
+
+    v = {"1","2","3"};
+    root = buildBinaryTree(v);
+    std::cout << so->maxPathSum(root) << std::endl; // 6 
+
+    v = {"-10","9","20","null","null","15","7"};
+    root = buildBinaryTree(v);
+    std::cout << so->maxPathSum(root) << std::endl; // 42
+                                                    
+    v = {"5","4","8","11","null","13","4","7","2","null","null","null","1"};
+    root = buildBinaryTree(v);
+    std::cout << so->maxPathSum(root) << std::endl; // 48
+}
