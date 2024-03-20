@@ -68,5 +68,6 @@
         "stack": "cpp",
         "algorithm": "cpp",
         "strstream": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabledIfIncludesResolve"
 }
