@@ -6,33 +6,28 @@ using std::string;
 class Solution {
 private:
     vector<vector<string>> res;
-    bool isPalindrome(string s, int start, int end) {
-        for (int i=start, j=end; i < j; i++, j--) {
-            if (s[i] != s[j]) return false;
-        }
-        return true;
-    }
-
-    void backtrack(vector<string>& strs, string s, int idx) {
+    void backtrack(vector<vector<int>>& dp, vector<string>& strs, string s, int idx) {
         if (idx == s.length()) {
             res.push_back(strs);
             return;
         }
 
         for (int i = idx; i < s.length(); i ++) {
-            if (!isPalindrome(s, idx, i)) {
-                continue;
+            if (s[i] == s[idx] && (i-idx <= 2||dp[idx+1][i-1])) {
+                dp[i][idx] = true;
+                strs.push_back(s.substr(idx, i-idx+1));
+                backtrack(dp, strs, s, i+1);
+                strs.pop_back();
             }
-            strs.push_back(s.substr(idx, i-idx+1));
-            backtrack(strs, s, i+1);
-            strs.pop_back();
         }
     }
 public:
     vector<vector<string>> partition(string s) {
-        res.clear();
-        vector<string> strs;
-        backtrack(strs, s, 0);
+        int n = s.length();
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        vector<string> interV;
+        backtrack(dp, interV, s, 0);
+
         return res;
     }
 };
