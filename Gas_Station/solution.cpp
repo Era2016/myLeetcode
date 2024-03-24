@@ -5,6 +5,7 @@ using namespace std;
 
 class Solution {
 public:
+    // timeout as func4
     int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
         for (int i = 0; i < (int)gas.size(); i ++) {
             int ret = 0, j = i;
@@ -24,20 +25,31 @@ public:
     }
 
     int canCompleteCircuit2(vector<int> &gas, vector<int> &cost) {
-        int start(0),total(0),tank(0);
+        int start(0), total(0), tank(0);
         //if car fails at 'start', record the next station
-        for(int i=0;i<(int)gas.size();i++) { 
-            if((tank=tank+gas[i]-cost[i])<0) {
-                start=i+1;total+=tank;tank=0;
+        for(int i = 0; i < (int)gas.size(); i ++) { 
+            if((tank = tank+gas[i]-cost[i]) < 0) {
+                start = i+1;
+                total += tank;
+                tank = 0;
             }
         }
-        return (total+tank<0)? -1:start;
+        return (total+tank<0)? -1: start;
     }
 
 /*
-The basic idea is every time we start from a station, we go as far as possible by increasing end until remaining gas is less than 0. If 'end' finally hits start we know we can travel around from 'start'. If we haven't traveled around, we know we cannot start from this station. Then we check the station before our start station if we can start from this station. Repeat until we have checked all stations.
+The basic idea is every time we start from a station, 
+we go as far as possible by increasing end until remaining gas is less than 0. 
+If 'end' finally hits start we know we can travel around from 'start'. 
+If we haven't traveled around, we know we cannot start from this station. 
+Then we check the station before our start station if we can start from this station. 
+Repeat until we have checked all stations.
 
-Note there is a little trick that every time we try to find the next start station, we always to back to extend the distance from start to end so that we can check all stations on the circuit. Otherwise, if we move start forward to decrease the distance from start to end, we are likely to end up with only checking part of the circuit. Another trick is we start from the end of the array so as to avoid some corner cases.
+Note there is a little trick that every time we try to find the next start station, 
+we always to back to extend the distance from start to end so that we can check all stations on the circuit. 
+Otherwise, if we move start forward to decrease the distance from start to end, 
+we are likely to end up with only checking part of the circuit. 
+Another trick is we start from the end of the array so as to avoid some corner cases.
 */
 	int canCompleteCircuit3(vector<int> &gas, vector<int> &cost) {
 
@@ -55,6 +67,32 @@ Note there is a little trick that every time we try to find the next start stati
           }
        }
        return sum >= 0 ? start : -1;
+    }
+
+	// 0....0,2 timeout
+	int canCompleteCircuit4(vector<int> &gas, vector<int> &cost) {
+		int siz = gas.size();
+        for (int cursor = 0; cursor < siz; cursor++) {
+            if (gas[cursor] < cost[cursor])
+                continue;
+
+            int newCursor = cursor;
+            int cnt = 0;
+            int left = 0;
+            while (cnt < siz) {
+                left = gas[newCursor] - cost[newCursor] + left;
+                if (left < 0) {
+                    break;
+                }
+                newCursor = (newCursor + 1 == siz) ? 0 : newCursor + 1;
+                cnt++;
+            }
+
+            if (cnt == siz)
+                return cursor;
+        }
+
+        return -1;
     }
 };
 
