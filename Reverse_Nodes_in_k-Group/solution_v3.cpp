@@ -35,12 +35,12 @@ private:
 
 public:
     ListNode* reverseKGroup(ListNode *head, int k) {
-        ListNode *dummy = new ListNode();
-        dummy->next = head;
+        ListNode *dummy = new ListNode(-1, head);
         ListNode *prev = dummy;
-        ListNode *tail, *cur, *next;
-        tail = cur = head;
-        while (tail != nullptr) {
+        ListNode *cur = head;
+
+        while (cur != nullptr) {
+            ListNode *tail = cur;
             for (int i = 1; i < k && tail != nullptr; i ++) {
                 tail = tail->next; 
             }
@@ -48,13 +48,12 @@ public:
                 return dummy->next;
             }
 
-            next = tail->next; 
+            ListNode *next = tail->next; 
             prev->next = reverseBetween(cur, 1, k);
             cur->next = next;
 
             prev = cur;
             cur = prev->next;
-            tail = cur;
         }
         return dummy->next;
     }
