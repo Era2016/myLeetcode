@@ -18,6 +18,7 @@ public:
             }
         }
         
+        // 因为油量不管在任何时候为起点时都能绕一圈， 那就返回 0
         if (minVal > 0) return 0;
         return (left >= 0)? (minIndex+1)%len: -1;
     }
