@@ -1,75 +1,62 @@
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 
-//basic_string substr (size_type pos = 0, size_type len = npos) const;
-using namespace std;
-
-void print(vector<string> v);
-void print(unordered_map<string, vector<string> > v);
+using std::string;
+using std::vector;
+using std::unordered_set;
+using std::unordered_map;
 
 class Solution {
-public:
-    vector<string> wordBreak(string s, vector<string>& wordDict) {
-        unordered_map<string, vector<string> > memo;
-        return dp(s, wordDict, memo);
-    }
 private:
-    vector<string> dp(string s, vector<string>& wordDict, unordered_map<string, vector<string> >& memo) {
-        if (s.length() == 0) {
+    unordered_map<string, vector<string>> um;
+    vector<string> backtrack(string s, unordered_set<string>& wordDict, int idx) {
+        if (idx == s.length()) {
             return {""};
-        }
-        if (memo.count(s) != 0) {
-            return memo[s];
         }
 
         vector<string> v;
-        for (string word: wordDict) {
-            if (s.substr(0, word.size()) != word) {
-                continue;
-            }
-            vector<string> res = dp(s.substr(word.size()), wordDict, memo);
-            for (string str: res) {
-                v.push_back(word + (str.empty() ? "" : " ") + str);
+        for (auto word: wordDict) {
+            if (s.substr(idx, word.size()) == word) {
+                if (um.find(word) != um.end()) {
+                    return um[word];
+                }
+                vector<string> sub = backtrack(s, wordDict, idx+word.size());
+                for (auto ss: sub) {
+                    v.push_back(word+(ss.empty()? "": " "+ss));
+                }
             }
         }
-        memo[s] = v;
+        um[s] = v;
         return v;
+    }
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> us(wordDict.begin(), wordDict.end());
+        return backtrack(s, us, 0);
     }
 };
 
-void print(vector<string> v) {
-    cout << "====start====" << endl;
-    for (string str: v) {
-        cout << str << endl;
-    }
-    cout << "====end====" << endl << endl;
-}
-
-void print(unordered_map<string, vector<string> > v) {
-    unordered_map<string, vector<string> >::iterator iter = v.begin();
-    for (; iter != v.end(); iter ++) {
-        cout << "key: "<< iter->first << endl;
-        cout << "value: " << endl;
-        print(iter->second);
-    }
-
-}
-
 int main() {
-	Solution* so = new Solution();
-	vector<string> v = {"cat", "cats", "and", "sand", "dog"};
-	string str = "catsanddog";
-	vector<string> val = so->wordBreak(str, v);
-    print(val);
+    Solution *so = new Solution();
+    vector<string> v, res;
+    auto print=[](vector<string>& vv) {
+        for (auto v: vv) {
+            std::cout << v << std::endl;
+        }
+        std::cout << std::endl;
+    };
 
-	v = {"apple", "pen", "applepen", "pine", "pineapple"}; 
-	str = "pineapplepenapple";
-	val = so->wordBreak(str, v);
-    print(val);
+    v = {"cat","cats","and","sand","dog"};
+    res = so->wordBreak("catsanddog", v);
+    print(res);
 
-	v = {"cats", "dog", "sand", "and", "cat"};
-	str = "catsandog";
-	val = so->wordBreak(str, v);
-    print(val);
+    v = {"apple","pen","applepen","pine","pineapple"}; 
+    res = so->wordBreak("pineapplepenapple", v);
+    print(res);
+
+    v = {"cats","dog","sand","and","cat"}; 
+    res = so->wordBreak("catsandog", v);
+    print(res);
 }
