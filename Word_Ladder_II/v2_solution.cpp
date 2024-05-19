@@ -14,12 +14,12 @@ using std::string;
 
 class Solution {
 public:
-vector<vector<string>> findLadders(string beginWord, 
-                                    string endWord, 
-                                    vector<string> &wordList) 
+vector<vector<string>> findLadders(string beginWord, string endWord, 
+        vector<string> &wordList) 
 {
     vector<vector<string>> res;
-    // 因为需要快速判断扩展出的单词是否在 wordList 里，因此需要将 wordList 存入哈希表，这里命名为「字典」
+    // 因为需要快速判断扩展出的单词是否在 wordList 里，
+    // 因此需要将 wordList 存入哈希表，这里命名为「字典」
     unordered_set<string> dict = {wordList.begin(), wordList.end()};
     // 修改以后看一下，如果根本就不在 dict 里面，跳过
     if (dict.find(endWord) == dict.end()) {
@@ -83,8 +83,7 @@ vector<vector<string>> findLadders(string beginWord,
 
 void backtrack(vector<vector<string>> &res, 
                 const string &Node, 
-                unordered_map<string, 
-                set<string>> &from,
+                unordered_map<string, set<string>> &from,
                 vector<string> &path) 
 {
     if (from[Node].empty()) {
@@ -98,3 +97,29 @@ void backtrack(vector<vector<string>> &res,
     }
 }
 };
+
+int main() {
+    Solution *so = new Solution();
+    vector<string> v;
+    vector<vector<string>> vv;
+    auto print=[&]() {
+        for (auto &arr: vv) {
+            for (auto &val: arr) {
+                std::cout << val << " ";
+            }
+            std::cout << std::endl;
+        }
+    };
+
+    v = {"hot","dot","dog","lot","log","cog"};
+    vv = so->findLadders("hit", "cog", v);
+    print();
+
+    v = {"hot","dot","dog","lot","log"};
+    vv = so->findLadders("hit", "cog", v);
+    print();
+
+    v = {"a","b","c"};
+    vv = so->findLadders("a", "c", v);
+    print();
+}

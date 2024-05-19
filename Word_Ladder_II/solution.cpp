@@ -1,71 +1,101 @@
 #include <iostream>
 #include <vector>
-#include <unordered_set>
-#include <unordered_map>
 #include <queue>
-#include <deque>
+#include <unordered_map>
+#include <unordered_set>
 
-using std::vector;
-using std::unordered_set;
-using std::unordered_map;
 using std::string;
+using std::vector;
 using std::queue;
-using std::deque;
+using std::unordered_map;
+using std::unordered_set;
 
 class Solution {
-private:
-    unordered_set<string> filter;
-    // change word
-    unordered_set<string> updateWord(string& origin) {
-        unordered_set<string> res;
-        for (int i = 0; i < origin.length(); i ++) {
-            string newStr = origin;
-            for (char c = 'a'; c <= 'z'; c ++) {
-                newStr[i] = c;
-                if (filter.find(newStr) != filter.end()) {
-                    res.insert(newStr);
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord,
+            vector<string>& wordList) {
+
+        unordered_set<string> dict(wordList.begin(), wordList.end());
+        if (dict.find(endWord) == dict.end()) return {};
+        dict.erase(beginWord);
+
+        vector<vector<string>> res;
+        unordered_map<string, int> um = {{beginWord, 0}}; // key->step
+        unordered_map<string, unordered_set<string>> from = {{beginWord, {}}}; // key->parent
+        queue<string> q; q.push(beginWord);
+        int wordSize = beginWord.size();
+        bool found = false;
+        int step = 0;
+        while (!q.empty()) {
+            step ++;
+            int size = q.size();
+            for (int cnt = 0; cnt < size; cnt ++) {
+                string origin = q.front(); q.pop();
+                for (int i = 0; i < wordSize; i ++) {
+                    string nextWord = origin;
+                    for (char c = 'a'; c <= 'z'; c ++) {
+                        nextWord[i] = c;
+                        if (um[nextWord] == step) {
+                            from[nextWord].insert(origin);
+                        }
+                        if (dict.find(nextWord) == dict.end()) continue;
+
+                        dict.erase(nextWord);
+                        from[nextWord].insert(origin);
+                        um[nextWord] = step;
+                        if (nextWord == endWord) found = true;
+                        q.push(nextWord);
+                    }
                 }
             }
+            if (found) break;
+        }
+        if (found) {
+            vector<string> path = {endWord};
+            backtrack(res, endWord, from, path);
         }
         return res;
     }
-    
-    // bfs(queue)
-public:
-    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
-        this->filter = unordered_set<string>(wordList.begin(), wordList.end());
-        unordered_map<int, unordered_set<string>> records; // depth->set
-        unordered_map<string, unordered_set<string>> childSet; // root->childSet
 
-        deque<string> q;
-        q.push_back(beginWord);
-        int depth = 1;
-        bool found = false;
-        while (!q.empty()) {
-            for (int i = 0; i < q.size(); i ++) {
-                string word = q.front(); q.pop_front();
-                unordered_set<string> newWords = updateWord(word);
-                records[depth] = newWords; 
-                if (newWords.find(endWord) != newWords.end()) {
-                    found = true;
-                }
-                if (childSet.find(word) == childSet.end()) {
-                    childSet[word] = newWords;
-                }
-            }
-            for (auto val: records[depth]) {
-                q.push_back(val);
-            }
+    void backtrack(vector<vector<string>>& res,
+            const string& node,
+            unordered_map<string, unordered_set<string>>& from,
+            vector<string>& path) {
 
-            if (found) break;
-            depth ++;
+        if (from[node].empty()) {
+            res.push_back({path.rbegin(), path.rend()});
+            return;
         }
-
-        if (!found) return {};
-        
+        for (const string& parent: from[node]) {
+            path.push_back(parent);
+            backtrack(res, parent, from, path);
+            path.pop_back();
+        }
     }
 };
 
 int main() {
-    return 1;
+    Solution *so = new Solution();
+    vector<string> v;
+    vector<vector<string>> vv;
+    auto print=[&]() {
+        for (auto &arr: vv) {
+            for (auto &val: arr) {
+                std::cout << val << " ";
+            }
+            std::cout << std::endl;
+        }
+    };
+
+    v = {"hot","dot","dog","lot","log","cog"};
+    vv = so->findLadders("hit", "cog", v);
+    print();
+
+    v = {"hot","dot","dog","lot","log"};
+    vv = so->findLadders("hit", "cog", v);
+    print();
+
+    v = {"a","b","c"};
+    vv = so->findLadders("a", "c", v);
+    print();
 }
